@@ -4,12 +4,10 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
-# Configuración de carpeta para archivos subidos
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Lista de Noticias con Enlaces Externos
 noticias_list = [
     {
         "titulo": "Inundaciones repentinas en el noreste argentino por crecidas del Río Uruguay",
@@ -31,7 +29,6 @@ noticias_list = [
     }
 ]
 
-# Lista de Soluciones y Dispositivos
 soluciones_list = [
     {
         "titulo": "Rastrillo-Pala de Arrastre Ergonómico",
@@ -49,7 +46,6 @@ soluciones_list = [
     }
 ]
 
-# Estado global de documentos y archivos
 archivos_estado = {
     "informe_pdf": None,
     "informe_financiero": None,
@@ -63,15 +59,12 @@ HTML_TEMPLATE = """
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Remoción de Barro - ELCONOCIMIENTOESPODER</title>
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary-color: #1b2a47;
             --accent-color: #d97706;
-            --dark-mud: #3e2723;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -88,11 +81,6 @@ HTML_TEMPLATE = """
             border: none;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .card-custom:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
         .badge-team {
             background-color: var(--accent-color);
@@ -108,38 +96,25 @@ HTML_TEMPLATE = """
         }
         .video-container iframe {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 0;
+            top: 0; left: 0; width: 100%; height: 100%; border: 0;
         }
         .pdf-preview {
-            width: 100%;
-            height: 380px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
+            width: 100%; height: 380px; border: 1px solid #e2e8f0; border-radius: 8px;
         }
         .foda-card {
-            border-radius: 10px;
-            padding: 20px;
-            color: #fff;
+            border-radius: 10px; padding: 20px; color: #fff;
         }
         .foda-f { background-color: #15803d; }
         .foda-o { background-color: #0369a1; }
         .foda-d { background-color: #c2410c; }
         .foda-a { background-color: #b91c1c; }
         footer {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 40px 0;
-            margin-top: 60px;
+            background-color: var(--primary-color); color: white; padding: 40px 0; margin-top: 60px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Encabezado con Código QR Auto-Generado -->
     <header class="text-center">
         <div class="container">
             <div class="row align-items-center">
@@ -160,7 +135,6 @@ HTML_TEMPLATE = """
 
     <main class="container my-5">
 
-        <!-- EQUIPO Y SEDE OFICIAL -->
         <section class="mb-5">
             <div class="card card-custom p-4 bg-white border-start border-4 border-warning">
                 <div class="row align-items-center">
@@ -201,7 +175,6 @@ HTML_TEMPLATE = """
             </div>
         </section>
 
-        <!-- EL PROBLEMA PRINCIPAL -->
         <section class="mb-5">
             <div class="card card-custom p-4 bg-white border-start border-4 border-danger">
                 <h2 class="fw-bold text-dark mb-3"><i class="fas fa-exclamation-triangle text-danger me-2"></i> Diagnóstico del Problema Principal</h2>
@@ -225,7 +198,6 @@ HTML_TEMPLATE = """
             </div>
         </section>
 
-        <!-- COMPARATIVA DE IMPACTO Y MÉTRICAS -->
         <section class="mb-5">
             <h2 class="fw-bold text-dark mb-3"><i class="fas fa-chart-line text-primary me-2"></i> Impacto y Eficiencia Estimada</h2>
             <div class="card card-custom p-4 bg-white">
@@ -265,7 +237,6 @@ HTML_TEMPLATE = """
             </div>
         </section>
 
-        <!-- MANUAL DE AUTOCONSTRUCCIÓN -->
         <section class="mb-5">
             <h2 class="fw-bold text-dark mb-3"><i class="fas fa-tools text-warning me-2"></i> Guía Rápida de Autoconstrucción Comunitaria</h2>
             <div class="row g-4">
@@ -292,7 +263,6 @@ HTML_TEMPLATE = """
             </div>
         </section>
 
-        <!-- FINANCIAMIENTO Y SOCIOS -->
         <section class="row g-4 mb-5">
             <div class="col-lg-6">
                 <div class="card card-custom h-100 p-4 bg-white border-top border-4 border-success">
@@ -319,32 +289,6 @@ HTML_TEMPLATE = """
             </div>
         </section>
 
-        <!-- MATERIALES QUÍMICOS Y MARCO LEGAL -->
-        <section class="row g-4 mb-5">
-            <div class="col-lg-6">
-                <div class="card card-custom h-100 p-4 bg-white border-top border-4 border-warning">
-                    <h3 class="fw-bold text-dark mb-3"><i class="fas fa-flask text-warning me-2"></i> Insumos Químicos Biodegradables</h3>
-                    <ul class="small text-secondary ps-3 mb-0">
-                        <li class="mb-2"><strong>Surfactantes Ecológicos:</strong> Disminuyen la tensión superficial del lodo endurecido para ablandarlo.</li>
-                        <li class="mb-2"><strong>Floculantes Orgánicos:</strong> Decantan sólidos en suspensión para facilitar la succión.</li>
-                        <li class="mb-0"><strong>Agentes Desinfectantes:</strong> Aplicación de hipoclorito diluido posterior a la remoción.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="col-lg-6">
-                <div class="card card-custom h-100 p-4 bg-white border-top border-4 border-dark">
-                    <h3 class="fw-bold text-dark mb-3"><i class="fas fa-balance-scale text-dark me-2"></i> Marco Legal Normativo</h3>
-                    <ul class="small text-secondary ps-3 mb-0">
-                        <li class="mb-2"><strong>Ley SINAGIR (Nº 27.287):</strong> Sistema Federal de Gestión Integral del Riesgo en Argentina.</li>
-                        <li class="mb-2"><strong>Protocolos de Emergencia Hídrica:</strong> Normativas municipales ante crecidas del Río Uruguay.</li>
-                        <li class="mb-0"><strong>Norma ISO 6385:</strong> Principios ergonómicos para la prevención de fatiga en el trabajo manual.</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <!-- ANÁLISIS FODA -->
         <section class="mb-5">
             <h2 class="fw-bold text-dark mb-4"><i class="fas fa-chart-pie text-warning me-2"></i> Análisis FODA Estratégico</h2>
             <div class="row g-3">
@@ -389,7 +333,6 @@ HTML_TEMPLATE = """
             </div>
         </section>
 
-        <!-- NOTICIAS Y MEDIOS -->
         <section class="mb-5">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
@@ -432,7 +375,6 @@ HTML_TEMPLATE = """
             </div>
         </section>
 
-        <!-- DOCUMENTACIÓN PDF -->
         <section class="mb-5">
             <h2 class="fw-bold mb-4 text-dark"><i class="fas fa-file-pdf text-danger me-2"></i> Entregables Oficiales (PDFs)</h2>
             <div class="row g-4">
@@ -482,7 +424,6 @@ HTML_TEMPLATE = """
             </div>
         </section>
 
-        <!-- VIDEO PITCH YOUTUBE -->
         <section class="mb-5">
             <div class="card card-custom p-4 bg-white border-top border-4 border-primary">
                 <div class="row align-items-center mb-3">
@@ -505,12 +446,11 @@ HTML_TEMPLATE = """
             </div>
         </section>
 
-        <!-- DISPOSITIVOS Y SOLUCIONES -->
         <section class="mb-5">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="fw-bold text-dark mb-0"><i class="fas fa-tools text-warning me-2"></i> Catálogo de Dispositivos</h2>
+                <h2 class="fw-bold text-dark mb-0"><i class="fas fa-tools text-warning me-2"></i> Soluciones & Dispositivos Desarrollados</h2>
                 <button class="btn btn-warning fw-bold text-dark btn-sm shadow-sm" data-bs-toggle="modal" data-bs-target="#modalSolucion">
-                    <i class="fas fa-plus-circle me-1"></i> Nueva Solución
+                    <i class="fas fa-plus-circle me-1"></i> Cargar Nueva Solución
                 </button>
             </div>
             <div class="row g-4">
@@ -541,7 +481,6 @@ HTML_TEMPLATE = """
 
     </main>
 
-    <!-- MODAL AGREGAR NOTICIA -->
     <div class="modal fade" id="modalNoticia" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -587,7 +526,6 @@ HTML_TEMPLATE = """
         </div>
     </div>
 
-    <!-- MODAL AGREGAR SOLUCIÓN -->
     <div class="modal fade" id="modalSolucion" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -646,14 +584,7 @@ HTML_TEMPLATE = """
 def home():
     host_url = request.host_url.rstrip('/')
     qr_url = f"https://api.qrserver.com/v1/create-qr-code/?size=180x180&data={host_url}"
-    
-    return render_template_string(
-        HTML_TEMPLATE, 
-        noticias=noticias_list, 
-        soluciones=soluciones_list, 
-        archivos=archivos_estado, 
-        qr_url=qr_url
-    )
+    return render_template_string(HTML_TEMPLATE, noticias=noticias_list, soluciones=soluciones_list, archivos=archivos_estado, qr_url=qr_url)
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
@@ -689,7 +620,6 @@ def add_noticia():
     fuente = request.form.get('fuente')
     enlace = request.form.get('enlace')
     resumen = request.form.get('resumen')
-    
     img_url = "https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=600&q=80"
     if 'foto_noticia' in request.files:
         file = request.files['foto_noticia']
@@ -699,13 +629,8 @@ def add_noticia():
             img_url = f"/uploads/{filename}"
 
     noticias_list.insert(0, {
-        "titulo": titulo,
-        "pais": pais,
-        "fuente": fuente,
-        "enlace": enlace,
-        "fecha": "Reciente",
-        "resumen": resumen,
-        "imagen": img_url
+        "titulo": titulo, "pais": pais, "fuente": fuente, "enlace": enlace,
+        "fecha": "Reciente", "resumen": resumen, "imagen": img_url
     })
     return redirect(url_for('home'))
 
@@ -715,7 +640,6 @@ def add_solucion():
     categoria = request.form.get('categoria')
     descripcion = request.form.get('descripcion')
     costo = request.form.get('costo')
-    
     img_url = "https://images.unsplash.com/photo-1584467735811-9985103cb136?auto=format&fit=crop&w=600&q=80"
     if 'foto_solucion' in request.files:
         file = request.files['foto_solucion']
@@ -725,11 +649,7 @@ def add_solucion():
             img_url = f"/uploads/{filename}"
 
     soluciones_list.append({
-        "titulo": titulo,
-        "categoria": categoria,
-        "descripcion": descripcion,
-        "costo": costo,
-        "imagen": img_url
+        "titulo": titulo, "categoria": categoria, "descripcion": descripcion, "costo": costo, "imagen": img_url
     })
     return redirect(url_for('home'))
 
