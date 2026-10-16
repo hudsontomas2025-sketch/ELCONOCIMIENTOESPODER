@@ -456,4 +456,59 @@ def add_testimonio():
     new_id = max([t["id"] for t in testimonios_list], default=-1) + 1
     testimonios_list.insert(0, {
         "id": new_id,
-        "nombre
+        "nombre": request.form.get('nombre'),
+        "ubicacion": request.form.get('ubicacion'),
+        "testimonio": request.form.get('testimonio'),
+        "fecha": "Reciente",
+        "foto": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80"
+    })
+    return redirect(url_for('home'))
+
+@app.route('/delete_testimonio/<int:item_id>', methods=['POST'])
+def delete_testimonio(item_id):
+    global testimonios_list
+    testimonios_list = [t for t in testimonios_list if t["id"] != item_id]
+    return redirect(url_for('home'))
+
+@app.route('/add_noticia', methods=['POST'])
+def add_noticia():
+    new_id = max([n["id"] for n in noticias_list], default=-1) + 1
+    noticias_list.insert(0, {
+        "id": new_id,
+        "titulo": request.form.get('titulo'),
+        "pais": request.form.get('pais'),
+        "fuente": "Comunidad",
+        "fecha": "Reciente",
+        "resumen": request.form.get('resumen'),
+        "enlace": request.form.get('enlace'),
+        "imagen": "https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=800&q=80"
+    })
+    return redirect(url_for('home'))
+
+@app.route('/delete_noticia/<int:item_id>', methods=['POST'])
+def delete_noticia(item_id):
+    global noticias_list
+    noticias_list = [n for n in noticias_list if n["id"] != item_id]
+    return redirect(url_for('home'))
+
+@app.route('/add_solucion', methods=['POST'])
+def add_solucion():
+    new_id = max([s["id"] for s in soluciones_list], default=-1) + 1
+    soluciones_list.insert(0, {
+        "id": new_id,
+        "titulo": request.form.get('titulo'),
+        "descripcion": request.form.get('descripcion'),
+        "costo": request.form.get('costo'),
+        "categoria": request.form.get('categoria'),
+        "imagen": "https://images.unsplash.com/photo-1584467735811-9985103cb136?auto=format&fit=crop&w=600&q=80"
+    })
+    return redirect(url_for('home'))
+
+@app.route('/delete_solucion/<int:item_id>', methods=['POST'])
+def delete_solucion(item_id):
+    global soluciones_list
+    soluciones_list = [s for s in soluciones_list if s["id"] != item_id]
+    return redirect(url_for('home'))
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', debug=True, port=5001)
