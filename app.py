@@ -21,7 +21,7 @@ equipo_list = [
 ]
 
 archivos_estado = {
-    "youtube_id": "dQw4w9WgXcQ",
+    "youtube_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
     "tiktok_url": "https://www.tiktok.com/"
 }
 
@@ -191,10 +191,13 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         <section class="mb-4">
             <div class="row g-2">
                 <div class="col-md-6">
-                    <h5 class="fw-bold text-dark mb-2"><i class="fas fa-video text-danger me-2"></i> Pitch (YouTube)</h5>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="fw-bold text-dark mb-0"><i class="fas fa-video text-danger me-2"></i> Pitch (YouTube)</h5>
+                        <button class="btn btn-danger btn-sm fw-bold modo-espectador-hide" data-bs-toggle="modal" data-bs-target="#modalYoutube">Editar</button>
+                    </div>
                     <div class="card card-custom p-2 bg-white">
                         <div class="ratio ratio-16x9 rounded overflow-hidden">
-                            <iframe src="https://www.youtube.com/embed/{{ youtube_id }}" allowfullscreen></iframe>
+                            <iframe src="{{ youtube_url }}" allowfullscreen></iframe>
                         </div>
                     </div>
                 </div>
@@ -262,6 +265,15 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             <div class="modal-footer"><button type="submit" class="btn btn-warning btn-sm text-dark">Guardar</button></div>
         </form></div></div>
     </div>
+    <div class="modal fade" id="modalYoutube" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog"><div class="modal-content"><form action="/update_youtube" method="post">
+            <div class="modal-header bg-danger text-white"><h5 class="modal-title">Actualizar Video de YouTube</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div class="mb-2"><label class="small fw-bold">URL de Embed de YouTube</label><input type="text" name="youtube_url" class="form-control form-control-sm" placeholder="Ej: https://www.youtube.com/embed/TU_ID" required></div>
+            </div>
+            <div class="modal-footer"><button type="submit" class="btn btn-danger btn-sm">Actualizar</button></div>
+        </form></div></div>
+    </div>
     <div class="modal fade" id="modalTiktok" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog"><div class="modal-content"><form action="/update_tiktok" method="post">
             <div class="modal-header bg-dark text-white"><h5 class="modal-title">Actualizar Enlace de TikTok</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
@@ -291,7 +303,12 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
 @app.route('/')
 def home():
-    return render_template_string(HTML_TEMPLATE, noticias=noticias_list, testimonios=testimonios_list, soluciones=soluciones_list, equipo_list=equipo_list, youtube_id=archivos_estado["youtube_id"], tiktok_url=archivos_estado["tiktok_url"])
+    return render_template_string(HTML_TEMPLATE, noticias=noticias_list, testimonios=testimonios_list, soluciones=soluciones_list, equipo_list=equipo_list, youtube_url=archivos_estado["youtube_url"], tiktok_url=archivos_estado["tiktok_url"])
+
+@app.route('/update_youtube', methods=['POST'])
+def update_youtube():
+    if u := request.form.get('youtube_url'): archivos_estado["youtube_url"] = u
+    return redirect(url_for('home'))
 
 @app.route('/update_tiktok', methods=['POST'])
 def update_tiktok():
