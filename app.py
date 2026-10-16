@@ -22,7 +22,7 @@ equipo_list = [
 
 archivos_estado = {
     "youtube_id": "dQw4w9WgXcQ",
-    "tiktok_url": "https://www.tiktok.com/embed/7234567890123456789"
+    "tiktok_url": "https://www.tiktok.com/"
 }
 
 HTML_TEMPLATE = """<!DOCTYPE html>
@@ -200,13 +200,13 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                 </div>
                 <div class="col-md-6">
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h5 class="fw-bold text-dark mb-0"><i class="fa-brands fa-tiktok text-dark me-2"></i> TikTok</h5>
+                        <h5 class="fw-bold text-dark mb-0"><i class="fa-brands fa-tiktok text-dark me-2"></i> TikTok del Proyecto</h5>
                         <button class="btn btn-dark btn-sm fw-bold modo-espectador-hide" data-bs-toggle="modal" data-bs-target="#modalTiktok">Editar</button>
                     </div>
-                    <div class="card card-custom p-2 bg-white text-center d-flex justify-content-center align-items-center">
-                        <div style="width: 100%; max-width: 240px; height: 320px; overflow: hidden; border-radius: 8px;">
-                            <iframe src="{{ tiktok_url }}" style="width: 100%; height: 100%; border: none;" allowfullscreen></iframe>
-                        </div>
+                    <div class="card card-custom p-4 bg-white text-center d-flex flex-column justify-content-center align-items-center h-100" style="min-height: 200px;">
+                        <i class="fa-brands fa-tiktok fa-3x mb-3 text-dark"></i>
+                        <p class="text-muted small mb-3">Mira nuestro video explicativo y de demostración en TikTok.</p>
+                        <a href="{{ tiktok_url }}" target="_blank" class="btn btn-dark fw-bold px-4"><i class="fa-brands fa-tiktok me-2"></i> Ver en TikTok</a>
                     </div>
                 </div>
             </div>
@@ -264,9 +264,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     </div>
     <div class="modal fade" id="modalTiktok" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog"><div class="modal-content"><form action="/update_tiktok" method="post">
-            <div class="modal-header bg-dark text-white"><h5 class="modal-title">Actualizar TikTok</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-header bg-dark text-white"><h5 class="modal-title">Actualizar Enlace de TikTok</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             <div class="modal-body">
-                <div class="mb-2"><label class="small fw-bold">URL de Embed</label><input type="text" name="tiktok_url" class="form-control form-control-sm" required></div>
+                <div class="mb-2"><label class="small fw-bold">URL del video de TikTok</label><input type="url" name="tiktok_url" class="form-control form-control-sm" required></div>
             </div>
             <div class="modal-footer"><button type="submit" class="btn btn-dark btn-sm">Actualizar</button></div>
         </form></div></div>
