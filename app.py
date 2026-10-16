@@ -22,7 +22,7 @@ equipo_list = [
 
 archivos_estado = {
     "youtube_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    "tiktok_url": "https://www.tiktok.com/"
+    "tiktok_url": "https://www.tiktok.com/@giuli1160/video/7697398587696663828"
 }
 
 HTML_TEMPLATE = """<!DOCTYPE html>
@@ -206,10 +206,16 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                         <h5 class="fw-bold text-dark mb-0"><i class="fa-brands fa-tiktok text-dark me-2"></i> TikTok del Proyecto</h5>
                         <button class="btn btn-dark btn-sm fw-bold modo-espectador-hide" data-bs-toggle="modal" data-bs-target="#modalTiktok">Editar</button>
                     </div>
-                    <div class="card card-custom p-4 bg-white text-center d-flex flex-column justify-content-center align-items-center h-100" style="min-height: 200px;">
-                        <i class="fa-brands fa-tiktok fa-3x mb-3 text-dark"></i>
-                        <p class="text-muted small mb-3">Mira nuestro video explicativo y de demostración en TikTok.</p>
-                        <a href="{{ tiktok_url }}" target="_blank" class="btn btn-dark fw-bold px-4"><i class="fa-brands fa-tiktok me-2"></i> Ver en TikTok</a>
+                    <div class="card card-custom p-3 bg-white text-center d-flex flex-row justify-content-around align-items-center h-100" style="min-height: 200px;">
+                        <div>
+                            <i class="fa-brands fa-tiktok fa-3x mb-2 text-dark"></i>
+                            <p class="text-muted small mb-2">Mira nuestra demostración.</p>
+                            <a href="{{ tiktok_url }}" target="_blank" class="btn btn-dark fw-bold px-3 btn-sm"><i class="fa-brands fa-tiktok me-1"></i> Ver en TikTok</a>
+                        </div>
+                        <div class="bg-light p-2 border rounded shadow-sm text-center">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data={{ tiktok_url }}" alt="QR TikTok" style="width: 100px; height: 100px;">
+                            <span class="d-block small text-muted mt-1" style="font-size: 11px;">Escanea el QR</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -267,7 +273,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     </div>
     <div class="modal fade" id="modalYoutube" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog"><div class="modal-content"><form action="/update_youtube" method="post">
-            <div class="modal-header bg-danger text-white"><h5 class="modal-title">Actualizar Video de YouTube</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+            <div class="modal-header bg-danger text-white"><h5 class="modal-title">Actualizar Video de YouTube</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             <div class="modal-body">
                 <div class="mb-2"><label class="small fw-bold">URL de Embed de YouTube</label><input type="text" name="youtube_url" class="form-control form-control-sm" placeholder="Ej: https://www.youtube.com/embed/TU_ID" required></div>
             </div>
