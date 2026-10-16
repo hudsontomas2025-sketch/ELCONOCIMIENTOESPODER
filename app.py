@@ -101,4 +101,3 @@ HTML_TEMPLATE = """
         body.espectador-active .modo-espectador-hide { display: none !important; }
         .btn-delete-card { position: absolute; top: 10px; right: 10px; z-index: 10; }
         .metric-card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4
-        
