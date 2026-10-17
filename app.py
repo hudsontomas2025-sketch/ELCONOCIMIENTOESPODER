@@ -1,8 +1,19 @@
 import os
-from flask import Flask, render_template_string, request, redirect, url_for
+from flask import Flask, render_template_string, request, redirect, url_for, send_from_directory
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
+# Configuración de carpeta de descargas/archivos
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+ALLOWED_EXTENSIONS = {'pdf', 'xlsx', 'xls', 'csv'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# Datos iniciales en memoria
 noticias_list = [
     {"id": 0, "titulo": "Alerta por El Niño en Concordia: Crecida del Río Uruguay", "pais": "Argentina 🇦🇷", "resumen": "El río Uruguay superó niveles críticos en la costa de Concordia.", "enlace": "https://www.fenix951.com.ar/noticia.php?id=356349", "imagen": "https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=800&q=80"}
 ]
@@ -18,6 +29,11 @@ soluciones_list = [
 equipo_list = [
     {"nombre": "Tomás Hudson", "rol": "Integrantes del Equipo ELCONOCIMIENTOESPODER"},
     {"nombre": "Colaboradores UNER Concordia", "rol": "Sede Académica - Entre Ríos, Argentina"}
+]
+
+documentos_list = [
+    {"id": 0, "nombre": "Informe_Tecnico_Desafio06.pdf", "tipo": "pdf", "fecha": "16 Oct 2026"},
+    {"id": 1, "nombre": "Calculo_Costos_y_Materiales.xlsx", "tipo": "excel", "fecha": "16 Oct 2026"}
 ]
 
 archivos_estado = {
@@ -66,6 +82,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         </div>
     </header>
     <main class="container my-4">
+
+        <!-- RADAR CLIMÁTICO -->
         <section class="mb-4">
             <div class="card card-custom p-3 bg-white border-start border-4 border-danger">
                 <div class="row align-items-center">
@@ -81,6 +99,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                 </div>
             </div>
         </section>
+
+        <!-- CALCULADORA -->
         <section class="mb-4">
             <div class="card card-custom p-3 bg-white border-start border-4 border-warning">
                 <h5 class="fw-bold text-dark mb-2"><i class="fas fa-calculator text-warning me-2"></i> Simulador y Calculadora Comparativa</h5>
@@ -102,6 +122,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                 </div>
             </div>
         </section>
+
+        <!-- MÉTRICAS -->
         <section class="mb-4">
             <div class="row g-2">
                 <div class="col-md-4"><div class="metric-card"><h4 class="fw-bold text-primary mb-1">-65%</h4><p class="text-secondary small mb-0 fw-bold">Tiempo de limpieza</p></div></div>
@@ -109,6 +131,44 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                 <div class="col-md-4"><div class="metric-card"><h4 class="fw-bold text-success mb-1">100%</h4><p class="text-secondary small mb-0 fw-bold">Independencia eléctrica</p></div></div>
             </div>
         </section>
+
+        <!-- DOCUMENTACIÓN Y ARCHIVOS EXCEL / PDF -->
+        <section class="mb-4">
+            <div class="card card-custom p-3 bg-white border-start border-4 border-info">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="fw-bold text-dark mb-0"><i class="fas fa-file-invoice text-info me-2"></i> Documentación Técnica (Excel y PDF)</h5>
+                    <button class="btn btn-info btn-sm text-white fw-bold modo-espectador-hide" data-bs-toggle="modal" data-bs-target="#modalArchivo"><i class="fas fa-upload me-1"></i> Subir Documento</button>
+                </div>
+                <p class="text-secondary small mb-3">Descarga los informes, planillas de cálculo y especificaciones del proyecto en formatos PDF o Excel.</p>
+                <div class="row g-2">
+                    {% for doc in documentos %}
+                    <div class="col-md-6">
+                        <div class="p-2 bg-light rounded border d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                {% if doc.tipo == 'pdf' %}
+                                    <i class="fas fa-file-pdf fa-2x text-danger me-2"></i>
+                                {% else %}
+                                    <i class="fas fa-file-excel fa-2x text-success me-2"></i>
+                                {% endif %}
+                                <div>
+                                    <h6 class="fw-bold mb-0 text-dark small">{{ doc.nombre }}</h6>
+                                    <small class="text-muted" style="font-size: 11px;">Subido: {{ doc.fecha }}</small>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-1 align-items-center">
+                                <a href="/uploads/{{ doc.nombre }}" class="btn btn-outline-primary btn-sm" download title="Descargar"><i class="fas fa-download"></i></a>
+                                <form action="/delete_documento/{{ doc.id }}" method="post" class="modo-espectador-hide m-0">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Eliminar"><i class="fas fa-trash"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- QR JURADO -->
         <section class="mb-4">
             <div class="card card-custom p-3 bg-white text-center border-start border-4 border-primary">
                 <h5 class="fw-bold text-dark mb-1"><i class="fas fa-qrcode text-primary me-2"></i> Acceso Móvil para el Jurado</h5>
@@ -117,6 +177,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                 </div>
             </div>
         </section>
+
+        <!-- NOTICIAS -->
         <section class="mb-4">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h5 class="fw-bold text-dark mb-0"><i class="fas fa-newspaper text-danger me-2"></i> Noticias & Alertas</h5>
@@ -142,6 +204,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                 </div>
             </div>
         </section>
+
+        <!-- SOLUCIONES -->
         <section class="mb-4">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h5 class="fw-bold text-dark mb-0"><i class="fas fa-tools text-warning me-2"></i> Soluciones Propuestas</h5>
@@ -168,6 +232,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                 {% endfor %}
             </div>
         </section>
+
+        <!-- TESTIMONIOS -->
         <section class="mb-4">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h5 class="fw-bold text-dark mb-0"><i class="fas fa-comment-dots text-primary me-2"></i> Testimonios Reales</h5>
@@ -188,6 +254,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                 {% endfor %}
             </div>
         </section>
+
+        <!-- VIDEOS (YOUTUBE Y TIKTOK) -->
         <section class="mb-4">
             <div class="row g-2">
                 <div class="col-md-6">
@@ -220,6 +288,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                 </div>
             </div>
         </section>
+
+        <!-- EQUIPO -->
         <section class="mb-4">
             <h5 class="fw-bold text-dark mb-2"><i class="fas fa-users text-primary me-2"></i> Equipo ELCONOCIMIENTOESPODER</h5>
             <div class="card card-custom p-3 bg-white">
@@ -236,6 +306,22 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </section>
     </main>
+
+    <!-- MODAL ARCHIVOS (EXCEL / PDF) -->
+    <div class="modal fade" id="modalArchivo" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog"><div class="modal-content"><form action="/add_documento" method="post" enctype="multipart/form-data">
+            <div class="modal-header bg-info text-white"><h5 class="modal-title">Subir Archivo Excel / PDF</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div class="mb-2">
+                    <label class="small fw-bold">Seleccionar archivo (.pdf, .xlsx, .xls, .csv)</label>
+                    <input type="file" name="file" class="form-control form-control-sm" accept=".pdf,.xlsx,.xls,.csv" required>
+                </div>
+            </div>
+            <div class="modal-footer"><button type="submit" class="btn btn-info text-white btn-sm">Subir</button></div>
+        </form></div></div>
+    </div>
+
+    <!-- MODALES VARIOS -->
     <div class="modal fade" id="modalTestimonio" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog"><div class="modal-content"><form action="/add_testimonio" method="post">
             <div class="modal-header bg-primary text-white"><h5 class="modal-title">Agregar Testimonio</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
@@ -273,7 +359,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     </div>
     <div class="modal fade" id="modalYoutube" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog"><div class="modal-content"><form action="/update_youtube" method="post">
-            <div class="modal-header bg-danger text-white"><h5 class="modal-title">Actualizar Video de YouTube</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-header bg-danger text-white"><h5 class="modal-title">Actualizar Video de YouTube</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
             <div class="modal-body">
                 <div class="mb-2"><label class="small fw-bold">URL de Embed de YouTube</label><input type="text" name="youtube_url" class="form-control form-control-sm" placeholder="Ej: https://www.youtube.com/embed/TU_ID" required></div>
             </div>
@@ -282,13 +368,14 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     </div>
     <div class="modal fade" id="modalTiktok" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog"><div class="modal-content"><form action="/update_tiktok" method="post">
-            <div class="modal-header bg-dark text-white"><h5 class="modal-title">Actualizar Enlace de TikTok</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-header bg-dark text-white"><h5 class="modal-title">Actualizar Enlace de TikTok</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
             <div class="modal-body">
                 <div class="mb-2"><label class="small fw-bold">URL del video de TikTok</label><input type="url" name="tiktok_url" class="form-control form-control-sm" required></div>
             </div>
             <div class="modal-footer"><button type="submit" class="btn btn-dark btn-sm">Actualizar</button></div>
         </form></div></div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function toggleEspectador(cb) {
@@ -309,7 +396,29 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
 @app.route('/')
 def home():
-    return render_template_string(HTML_TEMPLATE, noticias=noticias_list, testimonios=testimonios_list, soluciones=soluciones_list, equipo_list=equipo_list, youtube_url=archivos_estado["youtube_url"], tiktok_url=archivos_estado["tiktok_url"])
+    return render_template_string(HTML_TEMPLATE, noticias=noticias_list, testimonios=testimonios_list, soluciones=soluciones_list, equipo_list=equipo_list, documentos=documentos_list, youtube_url=archivos_estado["youtube_url"], tiktok_url=archivos_estado["tiktok_url"])
+
+@app.route('/uploads/<filename>')
+def download_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+@app.route('/add_documento', methods=['POST'])
+def add_documento():
+    if 'file' in request.files:
+        file = request.files['file']
+        if file and file.filename and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            tipo = 'pdf' if filename.lower().endswith('.pdf') else 'excel'
+            new_id = max([d["id"] for d in documentos_list], default=-1) + 1
+            documentos_list.insert(0, {"id": new_id, "nombre": filename, "tipo": tipo, "fecha": "16 Oct 2026"})
+    return redirect(url_for('home'))
+
+@app.route('/delete_documento/<int:item_id>', methods=['POST'])
+def delete_documento(item_id):
+    global documentos_list
+    documentos_list = [d for d in documentos_list if d["id"] != item_id]
+    return redirect(url_for('home'))
 
 @app.route('/update_youtube', methods=['POST'])
 def update_youtube():
