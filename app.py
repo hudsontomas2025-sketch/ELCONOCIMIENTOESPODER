@@ -6,7 +6,7 @@ app = Flask(__name__)
 # CONTRASEÑA DE ADMINISTRADOR
 ADMIN_PASSWORD = "1234"
 
-# Base de datos en memoria optimizada para evitar errores en Render
+# Base de datos en memoria
 noticias_list = [
     {
         "id": 0, 
@@ -48,7 +48,7 @@ soluciones_list = [
         "descripcion": "Diseñado para movilizar grandes volúmenes de lodo denso en espacios reducidos mediante tracción horizontal.", 
         "costo": "$15 - $25 USD", 
         "categoria": "Herramienta Manual", 
-        "imagen": "https://images.unsplash.com/photo-1584467735811-9985103cb136?auto=format&fit=crop&w=600&q=80"
+        "imagen": "https://images.unsplash.com/photo-1590682680695-43b964a3ae17?auto=format&fit=crop&w=600&q=80"
     },
     {
         "id": 1, 
@@ -60,7 +60,6 @@ soluciones_list = [
     }
 ]
 
-# Lista de integrantes oficiales
 equipo_list = [
     {"num": 1, "nombre": "HILARIO MANUEL CARABALLO", "rol": "Líder de Equipo", "carrera": "Administración"},
     {"num": 2, "nombre": "ENZO MACIEL", "rol": "Integrante", "carrera": "Ingeniería"},
@@ -73,7 +72,6 @@ equipo_list = [
     {"num": 9, "nombre": "GUADALUPE RICHARD", "rol": "Integrante", "carrera": "Economía - Contabilidad"}
 ]
 
-# Documentos enlazados directamente (más estables para celulares y Render)
 documentos_list = [
     {"id": 0, "nombre": "Informe_Tecnico_Desafio06.pdf", "tipo": "pdf", "enlace": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", "fecha": "16 Oct 2026"},
     {"id": 1, "nombre": "Calculo_Costos_y_Materiales.xlsx", "tipo": "excel", "enlace": "https://file-examples.com/index.php/sample-documents-download/sample-xls-download/", "fecha": "16 Oct 2026"}
@@ -104,7 +102,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         .modo-espectador-hide { display: none !important; }
         body.admin-authenticated .modo-espectador-hide { display: block !important; }
         
-        .btn-delete-card { position: absolute; top: 10px; right: 10px; z-index: 10; }
+        .btn-delete-card { position: absolute; top: 8px; right: 8px; z-index: 10; }
         .metric-card { background: white; border-radius: 12px; padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); text-align: center; border-top: 4px solid var(--accent); }
         footer { background-color: var(--primary); color: white; padding: 25px 0; margin-top: 40px; border-top: 4px solid var(--accent); }
     </style>
@@ -141,29 +139,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                     <div class="col-md-5">
                         <div class="ratio ratio-16x9 rounded overflow-hidden shadow-sm">
                             <iframe src="https://embed.windy.com/embed2.html?lat=-33.4489&lon=-70.6693&zoom=10&level=surface&overlay=rain&product=ecmwf&menu=&message=&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=km%2Fh&metricTemp=%C2%B0C&radarRange=-1" frameborder="0"></iframe>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- CALCULADORA -->
-        <section class="mb-3">
-            <div class="card card-custom p-3 bg-white border-start border-4 border-warning">
-                <h6 class="fw-bold text-dark mb-2"><i class="fas fa-calculator text-warning me-2"></i> Simulador y Calculadora Comparativa</h6>
-                <div class="row g-2 align-items-end">
-                    <div class="col-md-4">
-                        <label class="form-label small fw-bold">Superficie (m²):</label>
-                        <input type="number" id="inputMetros" class="form-control form-control-sm" value="50" min="10" max="500" oninput="calcularComparacion()">
-                    </div>
-                    <div class="col-md-4">
-                        <div class="p-2 bg-light rounded border">
-                            <span class="d-block small text-muted">A mano:</span> <strong id="resManualTiempo" class="text-danger">--</strong> | <strong id="resManualCosto" class="text-danger">--</strong>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="p-2 bg-light rounded border border-success">
-                            <span class="d-block small text-success">Con ELCONOCIMIENTOESPODER:</span> <strong id="resMaquinaTiempo" class="text-success">--</strong> | <strong id="resMaquinaCosto" class="text-success">--</strong>
                         </div>
                     </div>
                 </div>
@@ -230,6 +205,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                     {% for noti in noticias %}
                     <div class="carousel-item {% if loop.first %}active{% endif %}">
                         <div class="carousel-item-news" style="background-image: url('{{ noti.imagen }}');">
+                            <form action="/delete_noticia/{{ noti.id }}" method="post" class="modo-espectador-hide btn-delete-card">
+                                <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                            </form>
                             <div class="carousel-overlay">
                                 <span class="badge bg-danger mb-1 align-self-start">{{ noti.pais }}</span>
                                 <h6 class="fw-bold text-white mb-1">{{ noti.titulo }}</h6>
@@ -243,7 +221,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </section>
 
-        <!-- SOLUCIONES -->
+        <!-- SOLUCIONES PROPUESTAS CON OPCIÓN DE ELIMINAR -->
         <section class="mb-3">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h6 class="fw-bold text-dark mb-0"><i class="fas fa-tools text-warning me-2"></i> Soluciones Propuestas</h6>
@@ -253,12 +231,15 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                 {% for sol in soluciones %}
                 <div class="col-md-6">
                     <div class="card card-custom h-100 bg-white d-flex flex-row overflow-hidden">
+                        <form action="/delete_solucion/{{ sol.id }}" method="post" class="modo-espectador-hide btn-delete-card">
+                            <button type="submit" class="btn btn-danger btn-sm" title="Eliminar solución"><i class="fas fa-trash"></i></button>
+                        </form>
                         <img src="{{ sol.imagen }}" style="width: 100px; object-fit: cover;" alt="Herramienta">
-                        <div class="p-2 d-flex flex-column justify-content-between">
+                        <div class="p-2 d-flex flex-column justify-content-between pe-4">
                             <div>
                                 <span class="badge bg-secondary mb-1">{{ sol.categoria }}</span>
-                                <h6 class="fw-bold text-dark mb-1">{{ sol.titulo }}</h6>
-                                <p class="text-secondary small mb-1">{{ sol.descripcion }}</p>
+                                <h6 class="fw-bold text-dark mb-1 small">{{ sol.titulo }}</h6>
+                                <p class="text-secondary small mb-1" style="font-size: 11px;">{{ sol.descripcion }}</p>
                             </div>
                             <span class="fw-bold text-success small">{{ sol.costo }}</span>
                         </div>
@@ -278,6 +259,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                 {% for test in testimonios %}
                 <div class="col-md-6">
                     <div class="card card-custom p-3 bg-white border-start border-4 border-primary h-100">
+                        <form action="/delete_testimonio/{{ test.id }}" method="post" class="modo-espectador-hide btn-delete-card">
+                            <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                        </form>
                         <h6 class="fw-bold text-dark mb-1">{{ test.nombre }}</h6>
                         <p class="text-primary small fw-bold mb-1">{{ test.ubicacion }}</p>
                         <p class="text-secondary fst-italic small mb-0">"{{ test.testimonio }}"</p>
@@ -517,7 +501,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                     });
                     activarAdmin();
                 } catch (err) {
-                    activarAdmin(); // Fallback amigable para permitir acceso biométrico directo en móviles
+                    activarAdmin();
                 }
             } else {
                 activarAdmin();
@@ -525,15 +509,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         }
 
         function cancelarAdmin() { desactivarAdmin(); }
-
-        function calcularComparacion() {
-            const m2 = parseFloat(document.getElementById('inputMetros').value) || 0;
-            document.getElementById('resManualTiempo').innerText = (m2 * 0.8).toFixed(1) + ' hs';
-            document.getElementById('resManualCosto').innerText = '$' + (m2 * 12).toFixed(0) + ' USD';
-            document.getElementById('resMaquinaTiempo').innerText = (m2 * 0.25).toFixed(1) + ' hs';
-            document.getElementById('resMaquinaCosto').innerText = '$' + (m2 * 4).toFixed(0) + ' USD';
-        }
-        window.onload = calcularComparacion;
     </script>
 </body>
 </html>"""
@@ -567,14 +542,32 @@ def add_testimonio():
     testimonios_list.insert(0, {"id": max([t["id"] for t in testimonios_list], default=-1) + 1, "nombre": request.form.get('nombre'), "ubicacion": request.form.get('ubicacion'), "testimonio": request.form.get('testimonio')})
     return redirect(url_for('home'))
 
+@app.route('/delete_testimonio/<int:item_id>', methods=['POST'])
+def delete_testimonio(item_id):
+    global testimonios_list
+    testimonios_list = [t for t in testimonios_list if t["id"] != item_id]
+    return redirect(url_for('home'))
+
 @app.route('/add_noticia', methods=['POST'])
 def add_noticia():
     noticias_list.insert(0, {"id": max([n["id"] for n in noticias_list], default=-1) + 1, "titulo": request.form.get('titulo'), "pais": request.form.get('pais'), "resumen": request.form.get('resumen'), "enlace": request.form.get('enlace'), "imagen": "https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=800&q=80"})
     return redirect(url_for('home'))
 
+@app.route('/delete_noticia/<int:item_id>', methods=['POST'])
+def delete_noticia(item_id):
+    global noticias_list
+    noticias_list = [n for n in noticias_list if n["id"] != item_id]
+    return redirect(url_for('home'))
+
 @app.route('/add_solucion', methods=['POST'])
 def add_solucion():
     soluciones_list.insert(0, {"id": max([s["id"] for s in soluciones_list], default=-1) + 1, "titulo": request.form.get('titulo'), "descripcion": request.form.get('descripcion'), "costo": request.form.get('costo'), "categoria": request.form.get('categoria'), "imagen": "https://images.unsplash.com/photo-1584467735811-9985103cb136?auto=format&fit=crop&w=600&q=80"})
+    return redirect(url_for('home'))
+
+@app.route('/delete_solucion/<int:item_id>', methods=['POST'])
+def delete_solucion(item_id):
+    global soluciones_list
+    soluciones_list = [s for s in soluciones_list if s["id"] != item_id]
     return redirect(url_for('home'))
 
 if __name__ == '__main__':
