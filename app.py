@@ -4,15 +4,19 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
+# Configuración de carpeta para subida y descarga de archivos
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = {'pdf', 'xlsx', 'xls', 'csv'}
 
+# CONTRASEÑA DE ADMINISTRADOR (Cambia "1234" por la clave que quieras)
+ADMIN_PASSWORD = "1234"
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# Datos en memoria
+# Base de datos en memoria
 noticias_list = [
     {
         "id": 0, 
@@ -105,8 +109,11 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         .card-custom { border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); position: relative; }
         .carousel-item-news { height: 320px; background-size: cover; background-position: center; border-radius: 12px; position: relative; }
         .carousel-overlay { position: absolute; bottom: 0; top: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(15,23,42,0.95) 15%, rgba(15,23,42,0.4) 60%); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: flex-end; color: white; }
-        .modo-espectador-hide { display: block; }
-        body.espectador-active .modo-espectador-hide { display: none !important; }
+        
+        /* Por defecto oculta todos los elementos de administración */
+        .modo-espectador-hide { display: none !important; }
+        body.admin-authenticated .modo-espectador-hide { display: block !important; }
+        
         .btn-delete-card { position: absolute; top: 10px; right: 10px; z-index: 10; }
         .metric-card { background: white; border-radius: 12px; padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); text-align: center; border-top: 4px solid var(--accent); }
         footer { background-color: var(--primary); color: white; padding: 30px 0; margin-top: 50px; border-top: 4px solid var(--accent); }
@@ -117,8 +124,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         <div class="container d-flex justify-content-between align-items-center">
             <span><i class="fas fa-eye me-1 text-warning"></i> <strong>Modo de Visualización:</strong></span>
             <div class="form-check form-switch m-0">
-                <input class="form-check-input" type="checkbox" id="switchModoEspectador" onchange="toggleEspectador(this)">
-                <label class="form-check-label text-white fw-bold small" for="switchModoEspectador" id="labelModo">Modo Administrador (Edición)</label>
+                <input class="form-check-input" type="checkbox" id="switchModoEspectador" onchange="solicitarAccesoAdmin(this)">
+                <label class="form-check-label text-white fw-bold small" for="switchModoEspectador" id="labelModo">Modo Espectador / Jurado (Limpio)</label>
             </div>
         </div>
     </div>
@@ -394,6 +401,24 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         </div>
     </footer>
 
+    <!-- MODAL DE AUTENTICACIÓN / CONTRASEÑA DE ADMINISTRADOR -->
+    <div class="modal fade" id="modalAdminAuth" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h6 class="modal-title fw-bold"><i class="fas fa-lock text-warning me-2"></i>Acceso Restringido</h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" onclick="cancelarAdmin()"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="small text-muted mb-2">Introduce la contraseña de administrador:</p>
+                    <input type="password" id="inputAdminPin" class="form-control form-control-sm text-center mb-2" placeholder="••••">
+                    <div id="errorAdminPin" class="text-danger small d-none mb-2">Contraseña incorrecta</div>
+                    <button type="button" class="btn btn-warning btn-sm w-100 fw-bold" onclick="validarAdmin()">Ingresar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- MODALES DE EDICIÓN / SUBIDA -->
     <div class="modal fade" id="modalArchivo" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog"><div class="modal-content"><form action="/add_documento" method="post" enctype="multipart/form-data">
@@ -468,10 +493,43 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function toggleEspectador(cb) {
-            document.body.classList.toggle('espectador-active', cb.checked);
-            document.getElementById('labelModo').innerText = cb.checked ? 'Modo Espectador / Jurado (Limpio)' : 'Modo Administrador (Edición)';
+        const ADMIN_PIN_CORRECTO = "{{ admin_pin }}";
+        let modalAuthObj = null;
+
+        document.addEventListener("DOMContentLoaded", function() {
+            modalAuthObj = new bootstrap.Modal(document.getElementById('modalAdminAuth'), { backdrop: 'static', keyboard: false });
+        });
+
+        function solicitarAccesoAdmin(cb) {
+            if (cb.checked) {
+                // Si intenta activar el modo admin, pedir PIN
+                document.getElementById('inputAdminPin').value = '';
+                document.getElementById('errorAdminPin').classList.add('d-none');
+                modalAuthObj.show();
+            } else {
+                // Desactivar modo admin
+                document.body.classList.remove('admin-authenticated');
+                document.getElementById('labelModo').innerText = 'Modo Espectador / Jurado (Limpio)';
+            }
         }
+
+        function validarAdmin() {
+            const inputVal = document.getElementById('inputAdminPin').value;
+            if (inputVal === ADMIN_PIN_CORRECTO) {
+                modalAuthObj.hide();
+                document.body.classList.add('admin-authenticated');
+                document.getElementById('labelModo').innerText = 'Modo Administrador (Edición Habilitada)';
+            } else {
+                document.getElementById('errorAdminPin').classList.remove('d-none');
+            }
+        }
+
+        function cancelarAdmin() {
+            document.getElementById('switchModoEspectador').checked = false;
+            document.body.classList.remove('admin-authenticated');
+            document.getElementById('labelModo').innerText = 'Modo Espectador / Jurado (Limpio)';
+        }
+
         function calcularComparacion() {
             const m2 = parseFloat(document.getElementById('inputMetros').value) || 0;
             document.getElementById('resManualTiempo').innerText = (m2 * 0.8).toFixed(1) + ' hs';
@@ -486,7 +544,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
 @app.route('/')
 def home():
-    return render_template_string(HTML_TEMPLATE, noticias=noticias_list, testimonios=testimonios_list, soluciones=soluciones_list, equipo_list=equipo_list, documentos=documentos_list, youtube_url=archivos_estado["youtube_url"], tiktok_url=archivos_estado["tiktok_url"])
+    return render_template_string(HTML_TEMPLATE, noticias=noticias_list, testimonios=testimonios_list, soluciones=soluciones_list, equipo_list=equipo_list, documentos=documentos_list, youtube_url=archivos_estado["youtube_url"], tiktok_url=archivos_estado["tiktok_url"], admin_pin=ADMIN_PASSWORD)
 
 @app.route('/uploads/<filename>')
 def download_file(filename):
