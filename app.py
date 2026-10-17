@@ -108,7 +108,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
     <main class="container my-3">
 
-        <!-- APARTADO 1: LA PROBLEMÁTICA (FIJO AL PRINCIPIO) -->
+        <!-- APARTADO 1: LA PROBLEMÁTICA -->
         <section class="mb-3">
             <div class="card card-custom p-3 bg-white border-start border-4 border-danger">
                 <h5 class="fw-bold text-danger mb-2"><i class="fas fa-exclamation-triangle me-2"></i>La Problemática</h5>
@@ -118,7 +118,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </section>
 
-        <!-- APARTADO 2: VIDEO SOLUCIÓN EN YOUTUBE (AL PRINCIPIO) -->
+        <!-- APARTADO 2: VIDEO SOLUCIÓN YOUTUBE -->
         <section class="mb-3">
             <div class="card card-custom p-3 bg-white border-start border-4 border-success">
                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -149,17 +149,17 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </section>
 
-        <!-- DOCUMENTACIÓN TÉCNICA -->
+        <!-- DOCUMENTACIÓN TÉCNICA (CARGA RÁPIDA DE ENLACES / ARCHIVOS) -->
         <section class="mb-3">
             <div class="card card-custom p-3 bg-white border-start border-4 border-info">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <h6 class="fw-bold text-dark mb-0"><i class="fas fa-file-invoice text-info me-2"></i> Documentación Técnica (Excel / PDF)</h6>
-                    <button class="btn btn-info btn-sm text-white fw-bold modo-espectador-hide" data-bs-toggle="modal" data-bs-target="#modalArchivo"><i class="fas fa-upload me-1"></i> Subir Documento</button>
+                    <button class="btn btn-info btn-sm text-white fw-bold modo-espectador-hide" data-bs-toggle="modal" data-bs-target="#modalArchivo"><i class="fas fa-plus me-1"></i> Agregar Documento</button>
                 </div>
                 <div class="row g-2">
                     {% for doc in documentos %}
                     <div class="col-md-6">
-                        <div class="p-2 bg-light rounded border d-flex justify-content-between align-items-center">
+                        <div class="p-2 bg-light rounded border d-flex justify-content-between align-items-center position-relative">
                             <div class="d-flex align-items-center">
                                 {% if doc.tipo == 'pdf' %}
                                     <i class="fas fa-file-pdf fa-2x text-danger me-2"></i>
@@ -171,7 +171,12 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                                     <small class="text-muted" style="font-size: 11px;">{{ doc.fecha }}</small>
                                 </div>
                             </div>
-                            <a href="{{ doc.enlace }}" target="_blank" class="btn btn-outline-primary btn-sm" title="Descargar"><i class="fas fa-download"></i></a>
+                            <div class="d-flex align-items-center">
+                                <a href="{{ doc.enlace }}" target="_blank" class="btn btn-outline-primary btn-sm me-1" title="Abrir/Descargar"><i class="fas fa-external-link-alt"></i></a>
+                                <form action="/delete_documento/{{ doc.id }}" method="post" class="modo-espectador-hide d-inline">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Eliminar"><i class="fas fa-trash"></i></button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                     {% endfor %}
@@ -248,7 +253,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </section>
 
-        <!-- QR DE ACCESO MÓVIL PARA EL JURADO -->
+        <!-- ACCESO MÓVIL JURADO -->
         <section class="mb-3">
             <div class="card card-custom p-3 bg-white text-center border-start border-4 border-warning">
                 <h6 class="fw-bold text-dark mb-1"><i class="fas fa-qrcode text-warning me-2"></i> Acceso Móvil para el Jurado</h6>
@@ -258,7 +263,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </section>
 
-        <!-- INTEGRANTES DEL EQUIPO -->
+        <!-- INTEGRANTES -->
         <section class="mb-3">
             <h6 class="fw-bold text-dark mb-2"><i class="fas fa-users text-primary me-2"></i> Integrantes — ELCONOCIMIENTOESPODER</h6>
             <div class="card card-custom p-3 bg-white border-start border-4 border-primary">
@@ -329,16 +334,16 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         </div>
     </div>
 
-    <!-- MODALES ADICIONALES -->
+    <!-- MODAL ARCHIVO (AGREGAR RÁPIDO) -->
     <div class="modal fade" id="modalArchivo" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog"><div class="modal-content"><form action="/add_documento" method="post" enctype="multipart/form-data">
-            <div class="modal-header bg-info text-white"><h5 class="modal-title">Subir Documento</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-dialog"><div class="modal-content"><form action="/add_documento" method="post">
+            <div class="modal-header bg-info text-white"><h5 class="modal-title">Agregar Documento</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             <div class="modal-body">
-                <div class="mb-2"><label class="small fw-bold">Nombre del archivo</label><input type="text" name="nombre" class="form-control form-control-sm" required></div>
-                <div class="mb-2"><label class="small fw-bold">Enlace (URL)</label><input type="url" name="enlace" class="form-control form-control-sm" placeholder="https://..." required></div>
-                <div class="mb-2"><label class="small fw-bold">Tipo</label><select name="tipo" class="form-select form-select-sm"><option value="pdf">PDF</option><option value="excel">Excel</option></select></div>
+                <div class="mb-2"><label class="small fw-bold">Nombre del documento</label><input type="text" name="nombre" class="form-control form-control-sm" placeholder="Ej: Memoria_Descriptiva.pdf" required></div>
+                <div class="mb-2"><label class="small fw-bold">Enlace del archivo (Google Drive, OneDrive, etc.)</label><input type="url" name="enlace" class="form-control form-control-sm" placeholder="https://..." required></div>
+                <div class="mb-2"><label class="small fw-bold">Tipo de archivo</label><select name="tipo" class="form-select form-select-sm"><option value="pdf">PDF</option><option value="excel">Excel</option></select></div>
             </div>
-            <div class="modal-footer"><button type="submit" class="btn btn-info text-white btn-sm">Guardar</button></div>
+            <div class="modal-footer"><button type="submit" class="btn btn-info text-white btn-sm">Guardar Enlace</button></div>
         </form></div></div>
     </div>
 
@@ -371,7 +376,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         <div class="modal-dialog"><div class="modal-content"><form action="/update_youtube" method="post">
             <div class="modal-header bg-danger text-white"><h5 class="modal-title">Actualizar Video de YouTube</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
             <div class="modal-body">
-                <div class="mb-2"><label class="small fw-bold">URL de Embed de YouTube</label><input type="text" name="youtube_url" class="form-control form-control-sm" placeholder="Ej: https://www.youtube.com/embed/TU_ID" required></div>
+                <div class="mb-2"><label class="small fw-bold">URL de Embed de YouTube</label><input type="text" name="youtube_url" class="form-control form-control-sm" placeholder="Ej: https://www.youtube.com/embed/ID_DEL_VIDEO" required></div>
             </div>
             <div class="modal-footer"><button type="submit" class="btn btn-danger btn-sm">Actualizar</button></div>
         </form></div></div>
@@ -466,7 +471,13 @@ def add_documento():
     tipo = request.form.get('tipo', 'pdf')
     if nombre and enlace:
         new_id = max([d["id"] for d in documentos_list], default=-1) + 1
-        documentos_list.insert(0, {"id": new_id, "nombre": nombre, "tipo": tipo, "enlace": enlace, "fecha": "16 Oct 2026"})
+        documentos_list.insert(0, {"id": new_id, "nombre": nombre, "tipo": tipo, "enlace": enlace, "fecha": "17 Oct 2026"})
+    return redirect(url_for('home'))
+
+@app.route('/delete_documento/<int:item_id>', methods=['POST'])
+def delete_documento(item_id):
+    global documentos_list
+    documentos_list = [d for d in documentos_list if d["id"] != item_id]
     return redirect(url_for('home'))
 
 @app.route('/update_youtube', methods=['POST'])
