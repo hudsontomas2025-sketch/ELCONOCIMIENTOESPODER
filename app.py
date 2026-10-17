@@ -6,26 +6,6 @@ app = Flask(__name__)
 # CONTRASEÑA DE ADMINISTRADOR
 ADMIN_PASSWORD = "1234"
 
-# Base de datos en memoria
-noticias_list = [
-    {
-        "id": 0, 
-        "titulo": "Aluvión en Santiago de Chile: Agua y lodo bajan de quebradas afectando viviendas", 
-        "pais": "Chile 🇨🇱", 
-        "resumen": "Desprendimientos de barro y rocas precordilleranas afectan sectores habitacionales.", 
-        "enlace": "https://www.diariouno.com.ar/sociedad/aluvion-chile-reportan-1200-rescatados-y-384-damnificados-y-sigue-el-debate-la-prevencion-n1605218", 
-        "imagen": "https://images.unsplash.com/photo-1584467735811-9985103cb136?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-        "id": 1, 
-        "titulo": "Alerta por El Niño en Concordia: Crecida del Río Uruguay", 
-        "pais": "Argentina 🇦🇷", 
-        "resumen": "El río Uruguay superó niveles críticos en la costa de Concordia.", 
-        "enlace": "https://www.fenix951.com.ar/noticia.php?id=356349", 
-        "imagen": "https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=800&q=80"
-    }
-]
-
 testimonios_list = [
     {
         "id": 0, 
@@ -53,27 +33,13 @@ equipo_list = [
     {"num": 9, "nombre": "GUADALUPE RICHARD", "rol": "Integrante", "carrera": "Economía - Contabilidad"}
 ]
 
-# Documentos técnicos con el Presupuesto en Excel FIJO en primera posición
-documentos_list = [
-    {
-        "id": 0, 
-        "nombre": "Presupuesto_Desafio06_Extraccion_Barro.xlsx", 
-        "tipo": "excel", 
-        "enlace": "https://docs.google.com/spreadsheets/d/1QBOBfwBylOL--v5b97GJ6_T-UFbCkZa0cVIybnGih6A/edit", 
-        "fecha": "17 Oct 2026"
-    },
-    {
-        "id": 1, 
-        "nombre": "Informe_Tecnico_Desafio06.pdf", 
-        "tipo": "pdf", 
-        "enlace": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", 
-        "fecha": "17 Oct 2026"
-    }
-]
-
 archivos_estado = {
     "youtube_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    "tiktok_url": "https://www.tiktok.com/@giuli1160/video/7697398587696663828"
+    "tiktok_url": "https://www.tiktok.com/@giuli1160/video/7697398587696663828",
+    "doc_url": "https://docs.google.com/document/d/1RajPj2JWkuQKAJaoVNh8dDuxDxQsYjNu/preview",
+    "doc_direct_url": "https://docs.google.com/document/d/1RajPj2JWkuQKAJaoVNh8dDuxDxQsYjNu/edit?usp=sharing",
+    "sheet_url": "https://docs.google.com/spreadsheets/d/1QBOBfwBylOL--v5b97GJ6_T-UFbCkZa0cVIybnGih6A/preview",
+    "sheet_direct_url": "https://docs.google.com/spreadsheets/d/1QBOBfwBylOL--v5b97GJ6_T-UFbCkZa0cVIybnGih6A/edit?usp=sharing"
 }
 
 HTML_TEMPLATE = """<!DOCTYPE html>
@@ -90,8 +56,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         header { background: linear-gradient(135deg, var(--primary), #0f172a); color: white; padding: 25px 0; border-bottom: 4px solid var(--accent); }
         .mode-bar { background-color: #0f172a; color: #cbd5e1; padding: 6px 0; font-size: 0.85rem; }
         .card-custom { border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); position: relative; }
-        .carousel-item-news { height: 300px; background-size: cover; background-position: center; border-radius: 12px; position: relative; }
-        .carousel-overlay { position: absolute; bottom: 0; top: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(15,23,42,0.95) 15%, rgba(15,23,42,0.4) 60%); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: flex-end; color: white; }
         
         .modo-espectador-hide { display: none !important; }
         body.admin-authenticated .modo-espectador-hide { display: block !important; }
@@ -147,12 +111,39 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </section>
 
-        <!-- APARTADO 3: ANÁLISIS FODA DEL PROYECTO -->
+        <!-- APARTADO 3: PREVISUALIZACIÓN DEL INFORME TÉCNICO (GOOGLE DOCS) -->
+        <section class="mb-3">
+            <div class="card card-custom p-3 bg-white border-start border-4 border-primary">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="fw-bold text-primary mb-0"><i class="fas fa-file-alt text-primary me-2"></i>Informe Técnico y Memoria Descriptiva</h5>
+                    <a href="{{ doc_direct_url }}" target="_blank" class="btn btn-outline-primary btn-sm fw-bold"><i class="fas fa-external-link-alt me-1"></i> Abrir Documento</a>
+                </div>
+                <p class="text-secondary small mb-2">Previsualización interactiva del informe técnico cargado en Google Docs.</p>
+                <div class="ratio ratio-16x9 rounded overflow-hidden shadow-sm" style="min-height: 450px;">
+                    <iframe src="{{ doc_url }}" frameborder="0"></iframe>
+                </div>
+            </div>
+        </section>
+
+        <!-- APARTADO 4: PREVISUALIZACIÓN DEL PRESUPUESTO (GOOGLE SHEETS) -->
+        <section class="mb-3">
+            <div class="card card-custom p-3 bg-white border-start border-4 border-success">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="fw-bold text-success mb-0"><i class="fas fa-file-excel text-success me-2"></i>Presupuesto Estimado y Costos</h5>
+                    <a href="{{ sheet_direct_url }}" target="_blank" class="btn btn-outline-success btn-sm fw-bold"><i class="fas fa-external-link-alt me-1"></i> Abrir Planilla</a>
+                </div>
+                <p class="text-secondary small mb-2">Previsualización interactiva de la planilla de presupuesto cargada en Google Sheets.</p>
+                <div class="ratio ratio-16x9 rounded overflow-hidden shadow-sm" style="min-height: 450px;">
+                    <iframe src="{{ sheet_url }}" frameborder="0"></iframe>
+                </div>
+            </div>
+        </section>
+
+        <!-- APARTADO 5: ANÁLISIS FODA DEL PROYECTO -->
         <section class="mb-3">
             <div class="card card-custom p-3 bg-white border-start border-4 border-dark">
                 <h5 class="fw-bold text-dark mb-3"><i class="fas fa-chart-pie text-warning me-2"></i>Análisis FODA del Proyecto</h5>
                 <div class="row g-2">
-                    <!-- FORTALEZAS -->
                     <div class="col-md-6">
                         <div class="p-3 bg-light rounded border border-success h-100">
                             <h6 class="fw-bold text-success mb-2"><i class="fas fa-shield-alt me-2"></i>Fortalezas</h6>
@@ -165,7 +156,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                             </ul>
                         </div>
                     </div>
-                    <!-- OPORTUNIDADES -->
                     <div class="col-md-6">
                         <div class="p-3 bg-light rounded border border-primary h-100">
                             <h6 class="fw-bold text-primary mb-2"><i class="fas fa-lightbulb me-2"></i>Oportunidades</h6>
@@ -178,7 +168,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                             </ul>
                         </div>
                     </div>
-                    <!-- DEBILIDADES -->
                     <div class="col-md-6">
                         <div class="p-3 bg-light rounded border border-warning h-100">
                             <h6 class="fw-bold text-warning text-dark mb-2"><i class="fas fa-exclamation-circle me-2"></i>Debilidades</h6>
@@ -189,7 +178,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                             </ul>
                         </div>
                     </div>
-                    <!-- AMENAZAS -->
                     <div class="col-md-6">
                         <div class="p-3 bg-light rounded border border-danger h-100">
                             <h6 class="fw-bold text-danger mb-2"><i class="fas fa-bug me-2"></i>Amenazas</h6>
@@ -221,41 +209,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </section>
 
-        <!-- DOCUMENTACIÓN TÉCNICA (EXCEL PRESUPUESTO FIJO) -->
-        <section class="mb-3">
-            <div class="card card-custom p-3 bg-white border-start border-4 border-info">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h6 class="fw-bold text-dark mb-0"><i class="fas fa-file-invoice text-info me-2"></i> Documentación Técnica (Excel / PDF)</h6>
-                    <button class="btn btn-info btn-sm text-white fw-bold modo-espectador-hide" data-bs-toggle="modal" data-bs-target="#modalArchivo"><i class="fas fa-plus me-1"></i> Agregar Documento</button>
-                </div>
-                <div class="row g-2">
-                    {% for doc in documentos %}
-                    <div class="col-md-6">
-                        <div class="p-2 bg-light rounded border d-flex justify-content-between align-items-center position-relative">
-                            <div class="d-flex align-items-center">
-                                {% if doc.tipo == 'excel' or 'spreadsheets' in doc.enlace or 'sheet' in doc.enlace or 'xls' in doc.enlace %}
-                                    <i class="fas fa-file-excel fa-2x text-success me-2"></i>
-                                {% else %}
-                                    <i class="fas fa-file-pdf fa-2x text-danger me-2"></i>
-                                {% endif %}
-                                <div>
-                                    <h6 class="fw-bold mb-0 text-dark small">{{ doc.nombre }}</h6>
-                                    <small class="text-muted" style="font-size: 11px;">{{ doc.fecha }}</small>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <a href="{{ doc.enlace }}" target="_blank" class="btn btn-outline-primary btn-sm me-1" title="Abrir Documento"><i class="fas fa-external-link-alt"></i></a>
-                                <form action="/delete_documento/{{ doc.id }}" method="post" class="modo-espectador-hide d-inline">
-                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Eliminar"><i class="fas fa-trash"></i></button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </section>
-
         <!-- TIKTOK DEL PROYECTO -->
         <section class="mb-3">
             <div class="card card-custom p-3 bg-white border-start border-4 border-dark">
@@ -272,33 +225,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                     <div class="bg-white p-2 border rounded shadow-sm text-center">
                         <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={{ tiktok_url }}" alt="QR TikTok" style="width: 90px; height: 90px;">
                     </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- NOTICIAS Y ALERTAS -->
-        <section class="mb-3">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h6 class="fw-bold text-dark mb-0"><i class="fas fa-newspaper text-danger me-2"></i> Noticias & Alertas</h6>
-                <button class="btn btn-danger btn-sm fw-bold modo-espectador-hide" data-bs-toggle="modal" data-bs-target="#modalNoticia">Publicar Noticia</button>
-            </div>
-            <div id="carouselNoticias" class="carousel slide shadow-sm rounded overflow-hidden" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    {% for noti in noticias %}
-                    <div class="carousel-item {% if loop.first %}active{% endif %}">
-                        <div class="carousel-item-news" style="background-image: url('{{ noti.imagen }}');">
-                            <form action="/delete_noticia/{{ noti.id }}" method="post" class="modo-espectador-hide btn-delete-card">
-                                <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                            </form>
-                            <div class="carousel-overlay">
-                                <span class="badge bg-danger mb-1 align-self-start">{{ noti.pais }}</span>
-                                <h6 class="fw-bold text-white mb-1">{{ noti.titulo }}</h6>
-                                <p class="small text-light mb-1">{{ noti.resumen }}</p>
-                                <a href="{{ noti.enlace }}" target="_blank" class="btn btn-warning btn-sm fw-bold align-self-start">Leer Nota</a>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
                 </div>
             </div>
         </section>
@@ -406,19 +332,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         </div>
     </div>
 
-    <!-- MODAL ARCHIVO -->
-    <div class="modal fade" id="modalArchivo" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog"><div class="modal-content"><form action="/add_documento" method="post">
-            <div class="modal-header bg-info text-white"><h5 class="modal-title">Agregar Documento</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-            <div class="modal-body">
-                <div class="mb-2"><label class="small fw-bold">Nombre del documento</label><input type="text" name="nombre" class="form-control form-control-sm" placeholder="Ej: Presupuesto_Desafio06_Extraccion_Barro" required></div>
-                <div class="mb-2"><label class="small fw-bold">Enlace (Google Drive, OneDrive, etc.)</label><input type="url" name="enlace" class="form-control form-control-sm" placeholder="https://..." required></div>
-                <div class="mb-2"><label class="small fw-bold">Tipo de archivo</label><select name="tipo" class="form-select form-select-sm"><option value="excel">Excel / Planilla de cálculo</option><option value="pdf">PDF</option></select></div>
-            </div>
-            <div class="modal-footer"><button type="submit" class="btn btn-info text-white btn-sm">Guardar Enlace</button></div>
-        </form></div></div>
-    </div>
-
+    <!-- MODALES ADICIONALES -->
     <div class="modal fade" id="modalTestimonio" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog"><div class="modal-content"><form action="/add_testimonio" method="post">
             <div class="modal-header bg-primary text-white"><h5 class="modal-title">Agregar Testimonio</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
@@ -428,19 +342,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                 <div class="mb-2"><label class="small fw-bold">Testimonio</label><textarea name="testimonio" class="form-control form-control-sm" rows="2" required></textarea></div>
             </div>
             <div class="modal-footer"><button type="submit" class="btn btn-primary btn-sm">Guardar</button></div>
-        </form></div></div>
-    </div>
-
-    <div class="modal fade" id="modalNoticia" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog"><div class="modal-content"><form action="/add_noticia" method="post">
-            <div class="modal-header bg-danger text-white"><h5 class="modal-title">Publicar Noticia</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-            <div class="modal-body">
-                <div class="mb-2"><label class="small fw-bold">Titular</label><input type="text" name="titulo" class="form-control form-control-sm" required></div>
-                <div class="mb-2"><label class="small fw-bold">País</label><input type="text" name="pais" class="form-control form-control-sm" required></div>
-                <div class="mb-2"><label class="small fw-bold">Enlace</label><input type="url" name="enlace" class="form-control form-control-sm" required></div>
-                <div class="mb-2"><label class="small fw-bold">Resumen</label><textarea name="resumen" class="form-control form-control-sm" rows="2" required></textarea></div>
-            </div>
-            <div class="modal-footer"><button type="submit" class="btn btn-danger btn-sm">Publicar</button></div>
         </form></div></div>
     </div>
 
@@ -534,23 +435,18 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
 @app.route('/')
 def home():
-    return render_template_string(HTML_TEMPLATE, noticias=noticias_list, testimonios=testimonios_list, equipo_list=equipo_list, documentos=documentos_list, youtube_url=archivos_estado["youtube_url"], tiktok_url=archivos_estado["tiktok_url"], admin_pin=ADMIN_PASSWORD)
-
-@app.route('/add_documento', methods=['POST'])
-def add_documento():
-    nombre = request.form.get('nombre')
-    enlace = request.form.get('enlace')
-    tipo = request.form.get('tipo', 'pdf')
-    if nombre and enlace:
-        new_id = max([d["id"] for d in documentos_list], default=-1) + 1
-        documentos_list.insert(0, {"id": new_id, "nombre": nombre, "tipo": tipo, "enlace": enlace, "fecha": "17 Oct 2026"})
-    return redirect(url_for('home'))
-
-@app.route('/delete_documento/<int:item_id>', methods=['POST'])
-def delete_documento(item_id):
-    global documentos_list
-    documentos_list = [d for d in documentos_list if d["id"] != item_id]
-    return redirect(url_for('home'))
+    return render_template_string(
+        HTML_TEMPLATE, 
+        testimonios=testimonios_list, 
+        equipo_list=equipo_list, 
+        youtube_url=archivos_estado["youtube_url"], 
+        tiktok_url=archivos_estado["tiktok_url"], 
+        doc_url=archivos_estado["doc_url"],
+        doc_direct_url=archivos_estado["doc_direct_url"],
+        sheet_url=archivos_estado["sheet_url"],
+        sheet_direct_url=archivos_estado["sheet_direct_url"],
+        admin_pin=ADMIN_PASSWORD
+    )
 
 @app.route('/update_youtube', methods=['POST'])
 def update_youtube():
@@ -571,17 +467,6 @@ def add_testimonio():
 def delete_testimonio(item_id):
     global testimonios_list
     testimonios_list = [t for t in testimonios_list if t["id"] != item_id]
-    return redirect(url_for('home'))
-
-@app.route('/add_noticia', methods=['POST'])
-def add_noticia():
-    noticias_list.insert(0, {"id": max([n["id"] for n in noticias_list], default=-1) + 1, "titulo": request.form.get('titulo'), "pais": request.form.get('pais'), "resumen": request.form.get('resumen'), "enlace": request.form.get('enlace'), "imagen": "https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=800&q=80"})
-    return redirect(url_for('home'))
-
-@app.route('/delete_noticia/<int:item_id>', methods=['POST'])
-def delete_noticia(item_id):
-    global noticias_list
-    noticias_list = [n for n in noticias_list if n["id"] != item_id]
     return redirect(url_for('home'))
 
 if __name__ == '__main__':
