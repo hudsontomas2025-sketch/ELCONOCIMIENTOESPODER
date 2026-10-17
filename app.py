@@ -4,7 +4,6 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
-# Configuración de carpeta para subida y descarga de archivos
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -13,7 +12,7 @@ ALLOWED_EXTENSIONS = {'pdf', 'xlsx', 'xls', 'csv'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# Base de datos en memoria
+# Datos en memoria
 noticias_list = [
     {
         "id": 0, 
@@ -67,9 +66,17 @@ soluciones_list = [
     }
 ]
 
+# Lista completa de integrantes oficiales según la plataforma del Rally
 equipo_list = [
-    {"nombre": "Tomás Hudson", "rol": "Integrantes del Equipo ELCONOCIMIENTOESPODER"},
-    {"nombre": "Colaboradores UNER Concordia", "rol": "Sede Académica - Entre Ríos, Argentina"}
+    {"num": 1, "nombre": "HILARIO MANUEL CARABALLO", "rol": "Líder de Equipo", "carrera": "Administración"},
+    {"num": 2, "nombre": "ENZO MACIEL", "rol": "Integrante", "carrera": "Ingeniería"},
+    {"num": 3, "nombre": "VALENTINO GIOVENALE", "rol": "Integrante", "carrera": "Ingeniería"},
+    {"num": 4, "nombre": "MARTINIANO GODOY", "rol": "Integrante", "carrera": "Ingeniería"},
+    {"num": 5, "nombre": "GABRIEL MORENO", "rol": "Integrante", "carrera": "Ingeniería"},
+    {"num": 6, "nombre": "TOMAS HUDSON", "rol": "Integrante", "carrera": "Administración"},
+    {"num": 7, "nombre": "TOMÁS SILVETTI", "rol": "Integrante", "carrera": "Administración"},
+    {"num": 8, "nombre": "LARA RODRÍGUEZ", "rol": "Integrante", "carrera": "Economía - Contabilidad"},
+    {"num": 9, "nombre": "GUADALUPE RICHARD", "rol": "Integrante", "carrera": "Economía - Contabilidad"}
 ]
 
 documentos_list = [
@@ -102,7 +109,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         body.espectador-active .modo-espectador-hide { display: none !important; }
         .btn-delete-card { position: absolute; top: 10px; right: 10px; z-index: 10; }
         .metric-card { background: white; border-radius: 12px; padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); text-align: center; border-top: 4px solid var(--accent); }
-        footer { background-color: var(--primary); color: white; padding: 25px 0; margin-top: 40px; }
+        footer { background-color: var(--primary); color: white; padding: 30px 0; margin-top: 50px; border-top: 4px solid var(--accent); }
     </style>
 </head>
 <body>
@@ -166,7 +173,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </section>
 
-        <!-- MÉTRICAS DE IMPACTO -->
+        <!-- MÉTRICAS -->
         <section class="mb-4">
             <div class="row g-2">
                 <div class="col-md-4"><div class="metric-card"><h4 class="fw-bold text-primary mb-1">-65%</h4><p class="text-secondary small mb-0 fw-bold">Tiempo de limpieza</p></div></div>
@@ -175,7 +182,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </section>
 
-        <!-- DOCUMENTACIÓN Y ARCHIVOS EXCEL / PDF -->
+        <!-- DOCUMENTACIÓN TECNICA -->
         <section class="mb-4">
             <div class="card card-custom p-3 bg-white border-start border-4 border-info">
                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -211,7 +218,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </section>
 
-        <!-- QR DE ACCESO A LA WEB PARA EL JURADO -->
+        <!-- QR DE ACCESO PARA EL JURADO -->
         <section class="mb-4">
             <div class="card card-custom p-3 bg-white text-center border-start border-4 border-primary">
                 <h5 class="fw-bold text-dark mb-1"><i class="fas fa-qrcode text-primary me-2"></i> Acceso Móvil para el Jurado</h5>
@@ -221,7 +228,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </section>
 
-        <!-- NOTICIAS Y ALERTAS -->
+        <!-- NOTICIAS -->
         <section class="mb-4">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h5 class="fw-bold text-dark mb-0"><i class="fas fa-newspaper text-danger me-2"></i> Noticias & Alertas</h5>
@@ -248,7 +255,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </section>
 
-        <!-- SOLUCIONES TECNOLÓGICAS -->
+        <!-- SOLUCIONES -->
         <section class="mb-4">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h5 class="fw-bold text-dark mb-0"><i class="fas fa-tools text-warning me-2"></i> Soluciones Propuestas</h5>
@@ -276,7 +283,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </section>
 
-        <!-- TESTIMONIOS REALES -->
+        <!-- TESTIMONIOS -->
         <section class="mb-4">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h5 class="fw-bold text-dark mb-0"><i class="fas fa-comment-dots text-primary me-2"></i> Testimonios Reales</h5>
@@ -298,7 +305,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </section>
 
-        <!-- SECCIÓN VIDEOS (YOUTUBE Y TIKTOK CON QR) -->
+        <!-- VIDEOS (YOUTUBE Y TIKTOK CON QR) -->
         <section class="mb-4">
             <div class="row g-2">
                 <div class="col-md-6">
@@ -332,25 +339,62 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </section>
 
-        <!-- EQUIPO DE TRABAJO -->
+        <!-- SECCIÓN COMPLETA DE INTEGRANTES (EN FILA) -->
         <section class="mb-4">
-            <h5 class="fw-bold text-dark mb-2"><i class="fas fa-users text-primary me-2"></i> Equipo ELCONOCIMIENTOESPODER</h5>
-            <div class="card card-custom p-3 bg-white">
-                <div class="row g-2">
-                    {% for miem in equipo_list %}
-                    <div class="col-md-6">
-                        <div class="p-2 bg-light rounded border-start border-3 border-primary">
-                            <h6 class="fw-bold text-dark mb-0">{{ miem.nombre }}</h6>
-                            <small class="text-muted">{{ miem.rol }}</small>
-                        </div>
-                    </div>
-                    {% endfor %}
+            <h5 class="fw-bold text-dark mb-2"><i class="fas fa-users text-primary me-2"></i> Integrantes del Equipo — ELCONOCIMIENTOESPODER</h5>
+            <div class="card card-custom p-3 bg-white border-start border-4 border-primary">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col" class="text-center" style="width: 50px;">#</th>
+                                <th scope="col">País</th>
+                                <th scope="col">Participante</th>
+                                <th scope="col">Estatus</th>
+                                <th scope="col">Área de Estudio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for miem in equipo_list %}
+                            <tr>
+                                <td class="text-center fw-bold text-muted">{{ miem.num }}</td>
+                                <td><span class="fs-6">🇦🇷</span></td>
+                                <td class="fw-bold text-dark">
+                                    {% if miem.rol == 'Líder de Equipo' %}
+                                        <i class="fas fa-star text-warning me-1" title="Líder"></i>
+                                    {% else %}
+                                        <i class="fas fa-user text-secondary me-1"></i>
+                                    {% endif %}
+                                    {{ miem.nombre }}
+                                </td>
+                                <td>
+                                    {% if miem.rol == 'Líder de Equipo' %}
+                                        <span class="badge bg-warning text-dark fw-bold">Líder</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Integrante</span>
+                                    {% endif %}
+                                </td>
+                                <td class="small text-secondary">{{ miem.carrera }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </section>
+
     </main>
 
-    <!-- MODAL PARA SUBIR DOCUMENTOS (EXCEL / PDF) -->
+    <!-- FOOTER CON AUTORA / AUTORES Y DERECHOS RESERVADOS -->
+    <footer class="text-center">
+        <div class="container">
+            <h6 class="fw-bold mb-1 text-white"><i class="fas fa-graduation-cap me-2"></i>Sede Académica UNER Concordia — Entre Ríos, Argentina</h6>
+            <p class="small text-light opacity-90 mb-2">Desarrollado y diseñado por el Equipo <strong>ELCONOCIMIENTOESPODER</strong> para el Rally Latinoamericano de Innovación 2026</p>
+            <p class="small text-warning fw-bold mb-0">© 2026 ELCONOCIMIENTOESPODER. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- MODALES DE EDICIÓN / SUBIDA -->
     <div class="modal fade" id="modalArchivo" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog"><div class="modal-content"><form action="/add_documento" method="post" enctype="multipart/form-data">
             <div class="modal-header bg-info text-white"><h5 class="modal-title">Subir Archivo Excel / PDF</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
@@ -364,7 +408,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         </form></div></div>
     </div>
 
-    <!-- MODALES DE ADMINISTRACIÓN -->
     <div class="modal fade" id="modalTestimonio" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog"><div class="modal-content"><form action="/add_testimonio" method="post">
             <div class="modal-header bg-primary text-white"><h5 class="modal-title">Agregar Testimonio</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
@@ -376,6 +419,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             <div class="modal-footer"><button type="submit" class="btn btn-primary btn-sm">Guardar</button></div>
         </form></div></div>
     </div>
+
     <div class="modal fade" id="modalNoticia" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog"><div class="modal-content"><form action="/add_noticia" method="post">
             <div class="modal-header bg-danger text-white"><h5 class="modal-title">Publicar Noticia</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
@@ -388,6 +432,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             <div class="modal-footer"><button type="submit" class="btn btn-danger btn-sm">Publicar</button></div>
         </form></div></div>
     </div>
+
     <div class="modal fade" id="modalSolucion" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog"><div class="modal-content"><form action="/add_solucion" method="post">
             <div class="modal-header bg-warning text-dark"><h5 class="modal-title">Agregar Solución</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
@@ -400,6 +445,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             <div class="modal-footer"><button type="submit" class="btn btn-warning btn-sm text-dark">Guardar</button></div>
         </form></div></div>
     </div>
+
     <div class="modal fade" id="modalYoutube" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog"><div class="modal-content"><form action="/update_youtube" method="post">
             <div class="modal-header bg-danger text-white"><h5 class="modal-title">Actualizar Video de YouTube</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
@@ -409,6 +455,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             <div class="modal-footer"><button type="submit" class="btn btn-danger btn-sm">Actualizar</button></div>
         </form></div></div>
     </div>
+
     <div class="modal fade" id="modalTiktok" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog"><div class="modal-content"><form action="/update_tiktok" method="post">
             <div class="modal-header bg-dark text-white"><h5 class="modal-title">Actualizar Enlace de TikTok</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
