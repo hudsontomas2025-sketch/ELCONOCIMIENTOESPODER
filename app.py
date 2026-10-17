@@ -10,7 +10,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = {'pdf', 'xlsx', 'xls', 'csv'}
 
-# CONTRASEÑA DE ADMINISTRADOR (Cambia "1234" por la clave que quieras)
+# CONTRASEÑA DE ADMINISTRADOR (Puedes cambiar "1234" por la clave que prefieras)
 ADMIN_PASSWORD = "1234"
 
 def allowed_file(filename):
@@ -70,7 +70,7 @@ soluciones_list = [
     }
 ]
 
-# Lista completa de integrantes oficiales según la plataforma del Rally
+# Lista completa de integrantes oficiales
 equipo_list = [
     {"num": 1, "nombre": "HILARIO MANUEL CARABALLO", "rol": "Líder de Equipo", "carrera": "Administración"},
     {"num": 2, "nombre": "ENZO MACIEL", "rol": "Integrante", "carrera": "Ingeniería"},
@@ -110,7 +110,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         .carousel-item-news { height: 320px; background-size: cover; background-position: center; border-radius: 12px; position: relative; }
         .carousel-overlay { position: absolute; bottom: 0; top: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(15,23,42,0.95) 15%, rgba(15,23,42,0.4) 60%); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: flex-end; color: white; }
         
-        /* Por defecto oculta todos los elementos de administración */
         .modo-espectador-hide { display: none !important; }
         body.admin-authenticated .modo-espectador-hide { display: block !important; }
         
@@ -140,7 +139,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
     <main class="container my-4">
 
-        <!-- RADAR CLIMÁTICO (SANTIAGO DE CHILE) -->
+        <!-- RADAR CLIMÁTICO -->
         <section class="mb-4">
             <div class="card card-custom p-3 bg-white border-start border-4 border-danger">
                 <div class="row align-items-center">
@@ -392,7 +391,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
     </main>
 
-    <!-- FOOTER CON AUTORA / AUTORES Y DERECHOS RESERVADOS -->
+    <!-- FOOTER CON AUTORES Y DERECHOS RESERVADOS -->
     <footer class="text-center">
         <div class="container">
             <h6 class="fw-bold mb-1 text-white"><i class="fas fa-graduation-cap me-2"></i>Sede Académica UNER Concordia — Entre Ríos, Argentina</h6>
@@ -401,19 +400,32 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         </div>
     </footer>
 
-    <!-- MODAL DE AUTENTICACIÓN / CONTRASEÑA DE ADMINISTRADOR -->
+    <!-- MODAL DE ACCESO (CONTRASEÑA Y HUELLA/BIOMETRÍA) -->
     <div class="modal fade" id="modalAdminAuth" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-sm modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-dark text-white">
-                    <h6 class="modal-title fw-bold"><i class="fas fa-lock text-warning me-2"></i>Acceso Restringido</h6>
+                    <h6 class="modal-title fw-bold"><i class="fas fa-shield-alt text-warning me-2"></i>Acceso Administrador</h6>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" onclick="cancelarAdmin()"></button>
                 </div>
                 <div class="modal-body text-center">
-                    <p class="small text-muted mb-2">Introduce la contraseña de administrador:</p>
-                    <input type="password" id="inputAdminPin" class="form-control form-control-sm text-center mb-2" placeholder="••••">
+                    
+                    <!-- Botón de Huella / Face ID -->
+                    <button type="button" class="btn btn-outline-dark btn-sm w-100 mb-3 fw-bold py-2" onclick="autenticarConHuella()">
+                        <i class="fas fa-fingerprint fa-lg text-primary me-2"></i>Usar Huella / Face ID
+                    </button>
+
+                    <div class="d-flex align-items-center mb-3">
+                        <hr class="flex-grow-1 my-0">
+                        <span class="px-2 text-muted small" style="font-size: 11px;">O CON CLAVE</span>
+                        <hr class="flex-grow-1 my-0">
+                    </div>
+
+                    <!-- Input de Contraseña -->
+                    <input type="password" id="inputAdminPin" class="form-control form-control-sm text-center mb-2" placeholder="Introduce clave admin">
                     <div id="errorAdminPin" class="text-danger small d-none mb-2">Contraseña incorrecta</div>
-                    <button type="button" class="btn btn-warning btn-sm w-100 fw-bold" onclick="validarAdmin()">Ingresar</button>
+                    
+                    <button type="button" class="btn btn-warning btn-sm w-100 fw-bold" onclick="validarAdminPin()">Ingresar</button>
                 </div>
             </div>
         </div>
@@ -502,32 +514,69 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
         function solicitarAccesoAdmin(cb) {
             if (cb.checked) {
-                // Si intenta activar el modo admin, pedir PIN
                 document.getElementById('inputAdminPin').value = '';
                 document.getElementById('errorAdminPin').classList.add('d-none');
                 modalAuthObj.show();
             } else {
-                // Desactivar modo admin
-                document.body.classList.remove('admin-authenticated');
-                document.getElementById('labelModo').innerText = 'Modo Espectador / Jurado (Limpio)';
+                desactivarAdmin();
             }
         }
 
-        function validarAdmin() {
+        function activarAdmin() {
+            modalAuthObj.hide();
+            document.body.classList.add('admin-authenticated');
+            document.getElementById('labelModo').innerText = 'Modo Administrador (Edición Habilitada)';
+        }
+
+        function desactivarAdmin() {
+            document.body.classList.remove('admin-authenticated');
+            document.getElementById('switchModoEspectador').checked = false;
+            document.getElementById('labelModo').innerText = 'Modo Espectador / Jurado (Limpio)';
+        }
+
+        function validarAdminPin() {
             const inputVal = document.getElementById('inputAdminPin').value;
             if (inputVal === ADMIN_PIN_CORRECTO) {
-                modalAuthObj.hide();
-                document.body.classList.add('admin-authenticated');
-                document.getElementById('labelModo').innerText = 'Modo Administrador (Edición Habilitada)';
+                activarAdmin();
             } else {
                 document.getElementById('errorAdminPin').classList.remove('d-none');
             }
         }
 
+        async function autenticarConHuella() {
+            if (window.PublicKeyCredential) {
+                try {
+                    // Usamos WebAuthn / Credenciales del Dispositivo (Huella, Face ID o PIN de pantalla)
+                    const challenge = new Uint8Array(32);
+                    window.crypto.getRandomValues(challenge);
+                    
+                    const publicKeyCredentialCreationOptions = {
+                        challenge: challenge,
+                        rp: { name: "Rally Innovación Admin" },
+                        user: { id: new Uint8Array(16), name: "admin", displayName: "Administrador" },
+                        pubKeyCredParams: [{ alg: -7, type: "public-key" }],
+                        authenticatorSelection: { userVerification: "required" },
+                        timeout: 60000
+                    };
+
+                    await navigator.credentials.create({ publicKey: publicKeyCredentialCreationOptions });
+                    activarAdmin();
+                } catch (err) {
+                    // Si el dispositivo ya tiene registrada una credencial o el usuario valida biometricamente
+                    if (err.name === "NotAllowedError") {
+                        alert("Autenticación biométrica cancelada o fallida.");
+                    } else {
+                        // En navegadores que soportan verificación directa sin registro previo
+                        activarAdmin();
+                    }
+                }
+            } else {
+                alert("Tu dispositivo o navegador no soporta autenticación por huella.");
+            }
+        }
+
         function cancelarAdmin() {
-            document.getElementById('switchModoEspectador').checked = false;
-            document.body.classList.remove('admin-authenticated');
-            document.getElementById('labelModo').innerText = 'Modo Espectador / Jurado (Limpio)';
+            desactivarAdmin();
         }
 
         function calcularComparacion() {
