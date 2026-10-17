@@ -53,9 +53,22 @@ equipo_list = [
     {"num": 9, "nombre": "GUADALUPE RICHARD", "rol": "Integrante", "carrera": "Economía - Contabilidad"}
 ]
 
+# Documentos técnicos con el Presupuesto en Excel FIJO en primera posición
 documentos_list = [
-    {"id": 0, "nombre": "Informe_Tecnico_Desafio06.pdf", "tipo": "pdf", "enlace": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", "fecha": "16 Oct 2026"},
-    {"id": 1, "nombre": "Calculo_Costos_y_Materiales.xlsx", "tipo": "excel", "enlace": "https://file-examples.com/index.php/sample-documents-download/sample-xls-download/", "fecha": "16 Oct 2026"}
+    {
+        "id": 0, 
+        "nombre": "Presupuesto_Desafio06_Extraccion_Barro.xlsx", 
+        "tipo": "excel", 
+        "enlace": "https://docs.google.com/spreadsheets/d/1QBOBfwBylOL--v5b97GJ6_T-UFbCkZa0cVIybnGih6A/edit", 
+        "fecha": "17 Oct 2026"
+    },
+    {
+        "id": 1, 
+        "nombre": "Informe_Tecnico_Desafio06.pdf", 
+        "tipo": "pdf", 
+        "enlace": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", 
+        "fecha": "17 Oct 2026"
+    }
 ]
 
 archivos_estado = {
@@ -85,6 +98,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         
         .btn-delete-card { position: absolute; top: 8px; right: 8px; z-index: 10; }
         footer { background-color: var(--primary); color: white; padding: 25px 0; margin-top: 40px; border-top: 4px solid var(--accent); }
+        .foda-list { padding-left: 1.2rem; margin-bottom: 0; }
+        .foda-list li { margin-bottom: 0.3rem; font-size: 0.85rem; }
     </style>
 </head>
 <body>
@@ -132,6 +147,63 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </section>
 
+        <!-- APARTADO 3: ANÁLISIS FODA DEL PROYECTO -->
+        <section class="mb-3">
+            <div class="card card-custom p-3 bg-white border-start border-4 border-dark">
+                <h5 class="fw-bold text-dark mb-3"><i class="fas fa-chart-pie text-warning me-2"></i>Análisis FODA del Proyecto</h5>
+                <div class="row g-2">
+                    <!-- FORTALEZAS -->
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded border border-success h-100">
+                            <h6 class="fw-bold text-success mb-2"><i class="fas fa-shield-alt me-2"></i>Fortalezas</h6>
+                            <ul class="foda-list text-secondary">
+                                <li><strong>Integración tecnológica:</strong> combina hidro-corte, trituración y extracción continua en un mismo sistema portátil.</li>
+                                <li><strong>Potencial de eficiencia operativa:</strong> busca reducir el tiempo de limpieza y el esfuerzo físico de las personas afectadas.</li>
+                                <li><strong>Protección de las viviendas:</strong> diseño orientado a remover el barro preservando los pisos.</li>
+                                <li><strong>Potencial de economía circular:</strong> propone tratar el barro extraído para su posible aprovechamiento en obras viales.</li>
+                                <li><strong>Mantenimiento potencialmente accesible:</strong> utiliza componentes mecánicos convencionales y materiales de fácil acceso.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- OPORTUNIDADES -->
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded border border-primary h-100">
+                            <h6 class="fw-bold text-primary mb-2"><i class="fas fa-lightbulb me-2"></i>Oportunidades</h6>
+                            <ul class="foda-list text-secondary">
+                                <li><strong>Preparación comunitaria ante emergencias:</strong> disponer de equipos en zonas vulnerables para agilizar la limpieza y recuperación de las viviendas después de un aluvión.</li>
+                                <li><strong>Alianzas estratégicas:</strong> articular con municipios, ONG y empresas para desarrollar y financiar la solución.</li>
+                                <li><strong>Formación de brigadas locales:</strong> preparar a integrantes de la comunidad para utilizar el equipo de manera segura.</li>
+                                <li><strong>Gestión sustentable del sedimento:</strong> evaluar su tratamiento y reutilización para reducir la disposición descontrolada.</li>
+                                <li><strong>Posibilidad de replicación:</strong> adaptar el sistema a otras localidades afectadas por inundaciones y aluviones.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- DEBILIDADES -->
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded border border-warning h-100">
+                            <h6 class="fw-bold text-warning text-dark mb-2"><i class="fas fa-exclamation-circle me-2"></i>Debilidades</h6>
+                            <ul class="foda-list text-secondary">
+                                <li><strong>Validación técnica pendiente:</strong> se requieren pruebas en condiciones reales de funcionamiento.</li>
+                                <li><strong>Complejidad de integración mecánica:</strong> los mecanismos deben operar coordinadamente para evitar fallas y obstrucciones.</li>
+                                <li><strong>Adaptación a espacios difíciles:</strong> es necesario verificar la maniobrabilidad en viviendas con accesos estrechos y obstáculos.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- AMENAZAS -->
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded border border-danger h-100">
+                            <h6 class="fw-bold text-danger mb-2"><i class="fas fa-bug me-2"></i>Amenazas</h6>
+                            <ul class="foda-list text-secondary">
+                                <li><strong>Emergencias de gran magnitud:</strong> la demanda de atención puede superar la cantidad de equipos disponibles.</li>
+                                <li><strong>Contaminación del sedimento:</strong> puede impedir su reutilización y exigir una gestión alternativa.</li>
+                                <li><strong>Riesgos de seguridad:</strong> el agua a presión y los componentes móviles requieren medidas de protección adecuadas.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- RADAR CLIMÁTICO -->
         <section class="mb-3">
             <div class="card card-custom p-3 bg-white border-start border-4 border-primary">
@@ -149,7 +221,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </section>
 
-        <!-- DOCUMENTACIÓN TÉCNICA (CARGA RÁPIDA DE ENLACES / ARCHIVOS) -->
+        <!-- DOCUMENTACIÓN TÉCNICA (EXCEL PRESUPUESTO FIJO) -->
         <section class="mb-3">
             <div class="card card-custom p-3 bg-white border-start border-4 border-info">
                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -161,10 +233,10 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                     <div class="col-md-6">
                         <div class="p-2 bg-light rounded border d-flex justify-content-between align-items-center position-relative">
                             <div class="d-flex align-items-center">
-                                {% if doc.tipo == 'pdf' %}
-                                    <i class="fas fa-file-pdf fa-2x text-danger me-2"></i>
-                                {% else %}
+                                {% if doc.tipo == 'excel' or 'spreadsheets' in doc.enlace or 'sheet' in doc.enlace or 'xls' in doc.enlace %}
                                     <i class="fas fa-file-excel fa-2x text-success me-2"></i>
+                                {% else %}
+                                    <i class="fas fa-file-pdf fa-2x text-danger me-2"></i>
                                 {% endif %}
                                 <div>
                                     <h6 class="fw-bold mb-0 text-dark small">{{ doc.nombre }}</h6>
@@ -172,7 +244,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                                 </div>
                             </div>
                             <div class="d-flex align-items-center">
-                                <a href="{{ doc.enlace }}" target="_blank" class="btn btn-outline-primary btn-sm me-1" title="Abrir/Descargar"><i class="fas fa-external-link-alt"></i></a>
+                                <a href="{{ doc.enlace }}" target="_blank" class="btn btn-outline-primary btn-sm me-1" title="Abrir Documento"><i class="fas fa-external-link-alt"></i></a>
                                 <form action="/delete_documento/{{ doc.id }}" method="post" class="modo-espectador-hide d-inline">
                                     <button type="submit" class="btn btn-outline-danger btn-sm" title="Eliminar"><i class="fas fa-trash"></i></button>
                                 </form>
@@ -258,7 +330,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             <div class="card card-custom p-3 bg-white text-center border-start border-4 border-warning">
                 <h6 class="fw-bold text-dark mb-1"><i class="fas fa-qrcode text-warning me-2"></i> Acceso Móvil para el Jurado</h6>
                 <div class="d-inline-block bg-white p-2 border rounded shadow-sm">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://rally-extraccion-barro.onrender.com/" alt="QR" style="width: 90px; height: 90px;">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://elconocimientoespoder.onrender.com/" alt="QR" style="width: 90px; height: 90px;">
                 </div>
             </div>
         </section>
@@ -334,14 +406,14 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         </div>
     </div>
 
-    <!-- MODAL ARCHIVO (AGREGAR RÁPIDO) -->
+    <!-- MODAL ARCHIVO -->
     <div class="modal fade" id="modalArchivo" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog"><div class="modal-content"><form action="/add_documento" method="post">
             <div class="modal-header bg-info text-white"><h5 class="modal-title">Agregar Documento</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             <div class="modal-body">
-                <div class="mb-2"><label class="small fw-bold">Nombre del documento</label><input type="text" name="nombre" class="form-control form-control-sm" placeholder="Ej: Memoria_Descriptiva.pdf" required></div>
-                <div class="mb-2"><label class="small fw-bold">Enlace del archivo (Google Drive, OneDrive, etc.)</label><input type="url" name="enlace" class="form-control form-control-sm" placeholder="https://..." required></div>
-                <div class="mb-2"><label class="small fw-bold">Tipo de archivo</label><select name="tipo" class="form-select form-select-sm"><option value="pdf">PDF</option><option value="excel">Excel</option></select></div>
+                <div class="mb-2"><label class="small fw-bold">Nombre del documento</label><input type="text" name="nombre" class="form-control form-control-sm" placeholder="Ej: Presupuesto_Desafio06_Extraccion_Barro" required></div>
+                <div class="mb-2"><label class="small fw-bold">Enlace (Google Drive, OneDrive, etc.)</label><input type="url" name="enlace" class="form-control form-control-sm" placeholder="https://..." required></div>
+                <div class="mb-2"><label class="small fw-bold">Tipo de archivo</label><select name="tipo" class="form-select form-select-sm"><option value="excel">Excel / Planilla de cálculo</option><option value="pdf">PDF</option></select></div>
             </div>
             <div class="modal-footer"><button type="submit" class="btn btn-info text-white btn-sm">Guardar Enlace</button></div>
         </form></div></div>
@@ -376,7 +448,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         <div class="modal-dialog"><div class="modal-content"><form action="/update_youtube" method="post">
             <div class="modal-header bg-danger text-white"><h5 class="modal-title">Actualizar Video de YouTube</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
             <div class="modal-body">
-                <div class="mb-2"><label class="small fw-bold">URL de Embed de YouTube</label><input type="text" name="youtube_url" class="form-control form-control-sm" placeholder="Ej: https://www.youtube.com/embed/ID_DEL_VIDEO" required></div>
+                <div class="mb-2"><label class="small fw-bold">URL de Embed de YouTube</label><input type="text" name="youtube_url" class="form-control form-control-sm" required></div>
             </div>
             <div class="modal-footer"><button type="submit" class="btn btn-danger btn-sm">Actualizar</button></div>
         </form></div></div>
@@ -513,4 +585,5 @@ def delete_noticia(item_id):
     return redirect(url_for('home'))
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True, port=5001)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
