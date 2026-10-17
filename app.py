@@ -41,25 +41,6 @@ testimonios_list = [
     }
 ]
 
-soluciones_list = [
-    {
-        "id": 0, 
-        "titulo": "Rastrillo-Pala de Arrastre Ergonómico", 
-        "descripcion": "Diseñado para movilizar grandes volúmenes de lodo denso en espacios reducidos mediante tracción horizontal.", 
-        "costo": "$15 - $25 USD", 
-        "categoria": "Herramienta Manual", 
-        "imagen": "https://images.unsplash.com/photo-1590682680695-43b964a3ae17?auto=format&fit=crop&w=600&q=80"
-    },
-    {
-        "id": 1, 
-        "titulo": "Kit de Neutralización Enzimática de Lodo", 
-        "descripcion": "Aditivo ecológico de bajo costo para romper la cohesión del barro arcilloso facilitando su limpieza.", 
-        "costo": "$10 USD por kit", 
-        "categoria": "Insumo Biológico", 
-        "imagen": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=600&q=80"
-    }
-]
-
 equipo_list = [
     {"num": 1, "nombre": "HILARIO MANUEL CARABALLO", "rol": "Líder de Equipo", "carrera": "Administración"},
     {"num": 2, "nombre": "ENZO MACIEL", "rol": "Integrante", "carrera": "Ingeniería"},
@@ -103,7 +84,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         body.admin-authenticated .modo-espectador-hide { display: block !important; }
         
         .btn-delete-card { position: absolute; top: 8px; right: 8px; z-index: 10; }
-        .metric-card { background: white; border-radius: 12px; padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); text-align: center; border-top: 4px solid var(--accent); }
         footer { background-color: var(--primary); color: white; padding: 25px 0; margin-top: 40px; border-top: 4px solid var(--accent); }
     </style>
 </head>
@@ -128,12 +108,36 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
     <main class="container my-3">
 
-        <!-- RADAR CLIMÁTICO -->
+        <!-- APARTADO 1: LA PROBLEMÁTICA (FIJO AL PRINCIPIO) -->
         <section class="mb-3">
             <div class="card card-custom p-3 bg-white border-start border-4 border-danger">
+                <h5 class="fw-bold text-danger mb-2"><i class="fas fa-exclamation-triangle me-2"></i>La Problemática</h5>
+                <p class="text-secondary small mb-0">
+                    Durante eventos meteorológicos de precipitaciones intensas, aluviones y crecidas de ríos, toneladas de lodo y barro denso ingresan a las viviendas familiares. La limpieza manual resulta extenuante, lenta e ineficiente, mientras que la falta de herramientas adecuadas incrementa significativamente el tiempo de habitabilidad de los hogares afectados y genera pérdidas materiales irreversibles.
+                </p>
+            </div>
+        </section>
+
+        <!-- APARTADO 2: VIDEO SOLUCIÓN EN YOUTUBE (AL PRINCIPIO) -->
+        <section class="mb-3">
+            <div class="card card-custom p-3 bg-white border-start border-4 border-success">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="fw-bold text-success mb-0"><i class="fab fa-youtube text-danger me-2"></i>Video Solución del Proyecto (Pitch)</h5>
+                    <button class="btn btn-danger btn-sm fw-bold modo-espectador-hide" data-bs-toggle="modal" data-bs-target="#modalYoutube"><i class="fas fa-edit me-1"></i> Cambiar Video</button>
+                </div>
+                <p class="text-secondary small mb-3">Presentación audiovisual del prototipo y propuesta técnica elaborada por el equipo.</p>
+                <div class="ratio ratio-16x9 rounded overflow-hidden shadow-sm">
+                    <iframe src="{{ youtube_url }}" allowfullscreen></iframe>
+                </div>
+            </div>
+        </section>
+
+        <!-- RADAR CLIMÁTICO -->
+        <section class="mb-3">
+            <div class="card card-custom p-3 bg-white border-start border-4 border-primary">
                 <div class="row align-items-center">
                     <div class="col-md-7">
-                        <h6 class="fw-bold text-dark mb-1"><i class="fas fa-cloud-showers-heavy text-danger me-2"></i> Radar Climático (Santiago de Chile)</h6>
+                        <h6 class="fw-bold text-dark mb-1"><i class="fas fa-cloud-showers-heavy text-primary me-2"></i> Radar Climático en Vivo (Santiago de Chile)</h6>
                         <p class="text-secondary small mb-2 mb-md-0">Monitoreo en tiempo real de precipitaciones y riesgo de aluviones 🇨🇱.</p>
                     </div>
                     <div class="col-md-5">
@@ -145,21 +149,12 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </section>
 
-        <!-- MÉTRICAS -->
-        <section class="mb-3">
-            <div class="row g-2">
-                <div class="col-md-4"><div class="metric-card"><h5 class="fw-bold text-primary mb-1">-65%</h5><p class="text-secondary small mb-0 fw-bold">Tiempo de limpieza</p></div></div>
-                <div class="col-md-4"><div class="metric-card"><h5 class="fw-bold text-warning mb-1">$20 USD</h5><p class="text-secondary small mb-0 fw-bold">Costo de herramientas</p></div></div>
-                <div class="col-md-4"><div class="metric-card"><h5 class="fw-bold text-success mb-1">100%</h5><p class="text-secondary small mb-0 fw-bold">Independencia eléctrica</p></div></div>
-            </div>
-        </section>
-
         <!-- DOCUMENTACIÓN TÉCNICA -->
         <section class="mb-3">
             <div class="card card-custom p-3 bg-white border-start border-4 border-info">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <h6 class="fw-bold text-dark mb-0"><i class="fas fa-file-invoice text-info me-2"></i> Documentación Técnica (Excel / PDF)</h6>
-                    <button class="btn btn-info btn-sm text-white fw-bold modo-espectador-hide" data-bs-toggle="modal" data-bs-target="#modalArchivo"><i class="fas fa-upload me-1"></i> Subir</button>
+                    <button class="btn btn-info btn-sm text-white fw-bold modo-espectador-hide" data-bs-toggle="modal" data-bs-target="#modalArchivo"><i class="fas fa-upload me-1"></i> Subir Documento</button>
                 </div>
                 <div class="row g-2">
                     {% for doc in documentos %}
@@ -184,21 +179,31 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </section>
 
-        <!-- QR MÓVIL JURADO -->
+        <!-- TIKTOK DEL PROYECTO -->
         <section class="mb-3">
-            <div class="card card-custom p-3 bg-white text-center border-start border-4 border-primary">
-                <h6 class="fw-bold text-dark mb-1"><i class="fas fa-qrcode text-primary me-2"></i> Acceso Móvil para el Jurado</h6>
-                <div class="d-inline-block bg-white p-2 border rounded shadow-sm">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://rally-extraccion-barro.onrender.com/" alt="QR" style="width: 90px; height: 90px;">
+            <div class="card card-custom p-3 bg-white border-start border-4 border-dark">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="fw-bold text-dark mb-0"><i class="fa-brands fa-tiktok text-dark me-2"></i> TikTok del Proyecto</h6>
+                    <button class="btn btn-dark btn-sm fw-bold modo-espectador-hide" data-bs-toggle="modal" data-bs-target="#modalTiktok"><i class="fas fa-edit me-1"></i> Editar TikTok</button>
+                </div>
+                <div class="d-flex flex-row justify-content-around align-items-center p-2 bg-light rounded border">
+                    <div>
+                        <i class="fa-brands fa-tiktok fa-3x mb-2 text-dark"></i>
+                        <p class="text-muted small mb-2">Mira nuestra demostración en TikTok.</p>
+                        <a href="{{ tiktok_url }}" target="_blank" class="btn btn-dark fw-bold px-3 btn-sm"><i class="fa-brands fa-tiktok me-1"></i> Ver en TikTok</a>
+                    </div>
+                    <div class="bg-white p-2 border rounded shadow-sm text-center">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={{ tiktok_url }}" alt="QR TikTok" style="width: 90px; height: 90px;">
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- NOTICIAS -->
+        <!-- NOTICIAS Y ALERTAS -->
         <section class="mb-3">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h6 class="fw-bold text-dark mb-0"><i class="fas fa-newspaper text-danger me-2"></i> Noticias & Alertas</h6>
-                <button class="btn btn-danger btn-sm fw-bold modo-espectador-hide" data-bs-toggle="modal" data-bs-target="#modalNoticia">Publicar</button>
+                <button class="btn btn-danger btn-sm fw-bold modo-espectador-hide" data-bs-toggle="modal" data-bs-target="#modalNoticia">Publicar Noticia</button>
             </div>
             <div id="carouselNoticias" class="carousel slide shadow-sm rounded overflow-hidden" data-bs-ride="carousel">
                 <div class="carousel-inner">
@@ -221,39 +226,11 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </section>
 
-        <!-- SOLUCIONES PROPUESTAS CON OPCIÓN DE ELIMINAR -->
-        <section class="mb-3">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h6 class="fw-bold text-dark mb-0"><i class="fas fa-tools text-warning me-2"></i> Soluciones Propuestas</h6>
-                <button class="btn btn-warning btn-sm fw-bold text-dark modo-espectador-hide" data-bs-toggle="modal" data-bs-target="#modalSolucion">Agregar</button>
-            </div>
-            <div class="row g-2">
-                {% for sol in soluciones %}
-                <div class="col-md-6">
-                    <div class="card card-custom h-100 bg-white d-flex flex-row overflow-hidden">
-                        <form action="/delete_solucion/{{ sol.id }}" method="post" class="modo-espectador-hide btn-delete-card">
-                            <button type="submit" class="btn btn-danger btn-sm" title="Eliminar solución"><i class="fas fa-trash"></i></button>
-                        </form>
-                        <img src="{{ sol.imagen }}" style="width: 100px; object-fit: cover;" alt="Herramienta">
-                        <div class="p-2 d-flex flex-column justify-content-between pe-4">
-                            <div>
-                                <span class="badge bg-secondary mb-1">{{ sol.categoria }}</span>
-                                <h6 class="fw-bold text-dark mb-1 small">{{ sol.titulo }}</h6>
-                                <p class="text-secondary small mb-1" style="font-size: 11px;">{{ sol.descripcion }}</p>
-                            </div>
-                            <span class="fw-bold text-success small">{{ sol.costo }}</span>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </section>
-
-        <!-- TESTIMONIOS -->
+        <!-- TESTIMONIOS REALES -->
         <section class="mb-3">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h6 class="fw-bold text-dark mb-0"><i class="fas fa-comment-dots text-primary me-2"></i> Testimonios Reales</h6>
-                <button class="btn btn-primary btn-sm fw-bold modo-espectador-hide" data-bs-toggle="modal" data-bs-target="#modalTestimonio">Subir</button>
+                <button class="btn btn-primary btn-sm fw-bold modo-espectador-hide" data-bs-toggle="modal" data-bs-target="#modalTestimonio">Subir Testimonio</button>
             </div>
             <div class="row g-2">
                 {% for test in testimonios %}
@@ -271,39 +248,17 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </section>
 
-        <!-- VIDEOS -->
+        <!-- QR DE ACCESO MÓVIL PARA EL JURADO -->
         <section class="mb-3">
-            <div class="row g-2">
-                <div class="col-md-6">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h6 class="fw-bold text-dark mb-0"><i class="fas fa-video text-danger me-2"></i> Pitch (YouTube)</h6>
-                        <button class="btn btn-danger btn-sm fw-bold modo-espectador-hide" data-bs-toggle="modal" data-bs-target="#modalYoutube">Editar</button>
-                    </div>
-                    <div class="card card-custom p-2 bg-white">
-                        <div class="ratio ratio-16x9 rounded overflow-hidden">
-                            <iframe src="{{ youtube_url }}" allowfullscreen></iframe>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h6 class="fw-bold text-dark mb-0"><i class="fa-brands fa-tiktok text-dark me-2"></i> TikTok del Proyecto</h6>
-                        <button class="btn btn-dark btn-sm fw-bold modo-espectador-hide" data-bs-toggle="modal" data-bs-target="#modalTiktok">Editar</button>
-                    </div>
-                    <div class="card card-custom p-3 bg-white text-center d-flex flex-row justify-content-around align-items-center h-100" style="min-height: 180px;">
-                        <div>
-                            <i class="fa-brands fa-tiktok fa-3x mb-2 text-dark"></i>
-                            <a href="{{ tiktok_url }}" target="_blank" class="btn btn-dark fw-bold px-3 btn-sm"><i class="fa-brands fa-tiktok me-1"></i> Ver en TikTok</a>
-                        </div>
-                        <div class="bg-light p-2 border rounded shadow-sm text-center">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={{ tiktok_url }}" alt="QR" style="width: 90px; height: 90px;">
-                        </div>
-                    </div>
+            <div class="card card-custom p-3 bg-white text-center border-start border-4 border-warning">
+                <h6 class="fw-bold text-dark mb-1"><i class="fas fa-qrcode text-warning me-2"></i> Acceso Móvil para el Jurado</h6>
+                <div class="d-inline-block bg-white p-2 border rounded shadow-sm">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://rally-extraccion-barro.onrender.com/" alt="QR" style="width: 90px; height: 90px;">
                 </div>
             </div>
         </section>
 
-        <!-- INTEGRANTES -->
+        <!-- INTEGRANTES DEL EQUIPO -->
         <section class="mb-3">
             <h6 class="fw-bold text-dark mb-2"><i class="fas fa-users text-primary me-2"></i> Integrantes — ELCONOCIMIENTOESPODER</h6>
             <div class="card card-custom p-3 bg-white border-start border-4 border-primary">
@@ -412,24 +367,11 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         </form></div></div>
     </div>
 
-    <div class="modal fade" id="modalSolucion" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog"><div class="modal-content"><form action="/add_solucion" method="post">
-            <div class="modal-header bg-warning text-dark"><h5 class="modal-title">Agregar Solución</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-            <div class="modal-body">
-                <div class="mb-2"><label class="small fw-bold">Título</label><input type="text" name="titulo" class="form-control form-control-sm" required></div>
-                <div class="mb-2"><label class="small fw-bold">Categoría</label><input type="text" name="categoria" class="form-control form-control-sm" required></div>
-                <div class="mb-2"><label class="small fw-bold">Costo</label><input type="text" name="costo" class="form-control form-control-sm" required></div>
-                <div class="mb-2"><label class="small fw-bold">Descripción</label><textarea name="descripcion" class="form-control form-control-sm" rows="2" required></textarea></div>
-            </div>
-            <div class="modal-footer"><button type="submit" class="btn btn-warning btn-sm text-dark">Guardar</button></div>
-        </form></div></div>
-    </div>
-
     <div class="modal fade" id="modalYoutube" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog"><div class="modal-content"><form action="/update_youtube" method="post">
-            <div class="modal-header bg-danger text-white"><h5 class="modal-title">Actualizar YouTube</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+            <div class="modal-header bg-danger text-white"><h5 class="modal-title">Actualizar Video de YouTube</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
             <div class="modal-body">
-                <div class="mb-2"><label class="small fw-bold">URL de Embed</label><input type="text" name="youtube_url" class="form-control form-control-sm" required></div>
+                <div class="mb-2"><label class="small fw-bold">URL de Embed de YouTube</label><input type="text" name="youtube_url" class="form-control form-control-sm" placeholder="Ej: https://www.youtube.com/embed/TU_ID" required></div>
             </div>
             <div class="modal-footer"><button type="submit" class="btn btn-danger btn-sm">Actualizar</button></div>
         </form></div></div>
@@ -515,7 +457,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
 @app.route('/')
 def home():
-    return render_template_string(HTML_TEMPLATE, noticias=noticias_list, testimonios=testimonios_list, soluciones=soluciones_list, equipo_list=equipo_list, documentos=documentos_list, youtube_url=archivos_estado["youtube_url"], tiktok_url=archivos_estado["tiktok_url"], admin_pin=ADMIN_PASSWORD)
+    return render_template_string(HTML_TEMPLATE, noticias=noticias_list, testimonios=testimonios_list, equipo_list=equipo_list, documentos=documentos_list, youtube_url=archivos_estado["youtube_url"], tiktok_url=archivos_estado["tiktok_url"], admin_pin=ADMIN_PASSWORD)
 
 @app.route('/add_documento', methods=['POST'])
 def add_documento():
@@ -557,17 +499,6 @@ def add_noticia():
 def delete_noticia(item_id):
     global noticias_list
     noticias_list = [n for n in noticias_list if n["id"] != item_id]
-    return redirect(url_for('home'))
-
-@app.route('/add_solucion', methods=['POST'])
-def add_solucion():
-    soluciones_list.insert(0, {"id": max([s["id"] for s in soluciones_list], default=-1) + 1, "titulo": request.form.get('titulo'), "descripcion": request.form.get('descripcion'), "costo": request.form.get('costo'), "categoria": request.form.get('categoria'), "imagen": "https://images.unsplash.com/photo-1584467735811-9985103cb136?auto=format&fit=crop&w=600&q=80"})
-    return redirect(url_for('home'))
-
-@app.route('/delete_solucion/<int:item_id>', methods=['POST'])
-def delete_solucion(item_id):
-    global soluciones_list
-    soluciones_list = [s for s in soluciones_list if s["id"] != item_id]
     return redirect(url_for('home'))
 
 if __name__ == '__main__':
